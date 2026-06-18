@@ -1,0 +1,23 @@
+{
+  "name": "psms-erp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PSMS Group ERP — integrated AccountsCore + RetailFlow POS on Vercel + Neon",
+  "type": "module",
+  "engines": {
+    "node": ">=18.x"
+  },
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod",
+    "db:seed": "node scripts/seed.mjs"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.9.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "vercel": "^33.0.0"
+  }
+}
