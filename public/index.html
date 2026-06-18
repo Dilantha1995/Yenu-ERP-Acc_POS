@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSMS Group ERP · Sign In</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f6f9;--surface:#fff;--s2:#f0f2f6;--s3:#e8ebf0;
+  --border:#dde1e8;--border2:#c8cdd8;
+  --text:#1c2030;--t2:#5c6478;--t3:#9ba3b5;
+  --blue:#1849a9;--blue2:#eef2fc;--blue3:#0d2d6e;
+  --green:#166534;--green2:#f0fdf4;
+  --amber:#92400e;--amber2:#fffbeb;
+  --red:#991b1b;--red2:#fef2f2;
+  --teal:#115e59;--teal2:#f0fdfa;
+  --orange:#c2410c;--orange2:#fff7ed;
+  --purple:#6b21a8;--purple2:#faf5ff;
+  --r:8px;--r2:12px;
+}
+html,body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-height:100vh}
+
+/* ════════ SHELL ════════ */
+.shell{min-height:100vh;display:flex;flex-direction:column;
+  background:
+    radial-gradient(1100px 600px at -10% -10%, rgba(24,73,169,.12), transparent 55%),
+    radial-gradient(900px 500px at 110% 110%, rgba(107,33,168,.08), transparent 60%),
+    linear-gradient(180deg, #f4f6f9 0%, #eef2fc 100%);
+}
+.shell-bar{padding:14px 24px;display:flex;align-items:center;gap:14px;border-bottom:1px solid rgba(13,45,110,.08);backdrop-filter:blur(6px);background:rgba(255,255,255,.5)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--blue3);font-size:14px}
+.brand-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#0d2d6e,#1849a9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;box-shadow:0 6px 14px rgba(13,45,110,.2)}
+.brand-sub{font-size:10.5px;color:var(--t2);font-weight:600;background:var(--blue2);padding:3px 9px;border-radius:14px;border:1px solid #dbe4f5}
+.shell-bar-spacer{flex:1}
+.shell-bar small{font-size:11px;color:var(--t2)}
+.shell-bar a{color:var(--blue);font-weight:600;text-decoration:none;font-size:11.5px}
+
+.shell-main{flex:1;display:grid;grid-template-columns:1.05fr 1fr;gap:0;max-width:1280px;margin:0 auto;width:100%;padding:48px 24px 36px;align-items:center}
+
+/* ════════ LEFT (HERO / LAUNCHER) ════════ */
+.hero{padding:0 32px 0 12px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--border);padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;color:var(--blue3);box-shadow:0 4px 12px rgba(13,45,110,.05);margin-bottom:18px}
+.hero-eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(22,101,52,.6);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(22,101,52,.5)}50%{box-shadow:0 0 0 6px rgba(22,101,52,0)}}
+.hero h1{font-size:32px;font-weight:800;letter-spacing:-.01em;line-height:1.15;color:var(--text);margin-bottom:14px}
+.hero h1 .accent{background:linear-gradient(135deg,#1849a9,#6b21a8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-lead{font-size:14px;color:var(--t2);line-height:1.6;max-width:520px;margin-bottom:24px}
+
+.module-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:540px;margin-bottom:22px}
+.module-tile{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;text-decoration:none;color:inherit;display:block}
+.module-tile::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--accent,var(--blue));transform:scaleX(.4);transform-origin:left;transition:transform .25s}
+.module-tile:hover{border-color:var(--accent,var(--blue));transform:translateY(-2px);box-shadow:0 14px 30px rgba(13,45,110,.1)}
+.module-tile:hover::before{transform:scaleX(1)}
+.module-tile.locked{opacity:.55;cursor:not-allowed}
+.module-tile.locked:hover{transform:none;border-color:var(--border);box-shadow:none}
+.module-tile .mt-row{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+.module-tile .mt-icon{width:38px;height:38px;border-radius:10px;background:var(--accent-bg,var(--blue2));color:var(--accent,var(--blue));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.module-tile h3{font-size:14px;font-weight:800;color:var(--text)}
+.module-tile .mt-sub{font-size:10.5px;color:var(--t2);font-weight:600;margin-top:1px}
+.module-tile p{font-size:11.5px;color:var(--t2);line-height:1.55;margin-bottom:11px}
+.module-tile .mt-tags{display:flex;flex-wrap:wrap;gap:5px}
+.module-tile .mt-tag{font-size:9.5px;font-weight:700;background:var(--s2);color:var(--t2);padding:2.5px 7px;border-radius:8px;letter-spacing:.02em}
+.module-tile .mt-go{position:absolute;top:18px;right:18px;width:24px;height:24px;border-radius:50%;background:var(--s2);color:var(--t2);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s}
+.module-tile:hover .mt-go{background:var(--accent,var(--blue));color:#fff;transform:translate(2px,-2px)}
+
+.tile-accounts{--accent:#1849a9;--accent-bg:#eef2fc}
+.tile-pos{--accent:#166534;--accent-bg:#f0fdf4}
+.tile-payflow{--accent:#92400e;--accent-bg:#fffbeb}
+.tile-hr{--accent:#6b21a8;--accent-bg:#faf5ff}
+
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:540px}
+.h-stat{background:rgba(255,255,255,.6);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.h-stat .hs-l{font-size:9.5px;color:var(--t2);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.h-stat .hs-v{font-size:18px;font-weight:800;color:var(--blue3);margin-top:2px;font-variant-numeric:tabular-nums}
+
+/* ════════ RIGHT (LOGIN CARD) ════════ */
+.login-wrap{padding:0 12px 0 32px;display:flex;justify-content:center}
+.login-card{background:#fff;border-radius:18px;width:100%;max-width:420px;box-shadow:0 30px 80px rgba(13,45,110,.18),0 6px 24px rgba(13,45,110,.06);overflow:hidden;border:1px solid rgba(13,45,110,.06)}
+.login-head{padding:24px 28px 6px}
+.login-head h2{font-size:19px;font-weight:800;color:var(--text);margin-bottom:4px}
+.login-head p{font-size:12.5px;color:var(--t2)}
+.login-body{padding:18px 28px 4px}
+.fg{margin-bottom:13px}
+.fl{display:block;font-size:11px;font-weight:700;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.fi{width:100%;padding:11px 13px;font-size:13px;border:1.5px solid var(--border);border-radius:9px;outline:none;font-family:inherit;background:#fff;transition:all .15s}
+.fi:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(24,73,169,.08)}
+.fi.has-icon{padding-left:38px}
+.fi-wrap{position:relative}
+.fi-wrap .fi-ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--t3);pointer-events:none}
+.row-meta{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--t2);margin-top:-4px;margin-bottom:10px}
+.row-meta label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.row-meta input[type=checkbox]{accent-color:var(--blue)}
+.row-meta a{color:var(--blue);text-decoration:none;font-weight:600}
+.row-meta a:hover{text-decoration:underline}
+.login-btn{width:100%;background:linear-gradient(135deg,#1849a9,#0d2d6e);color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.02em;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:inherit}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(13,45,110,.25)}
+.login-btn:active{transform:translateY(0)}
+.login-btn:disabled{opacity:.65;cursor:not-allowed;transform:none}
+.login-btn .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.login-btn.loading .spinner{display:inline-block}
+.login-btn.loading .lbl{opacity:.6}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.login-err{display:none;background:var(--red2);color:var(--red);border:1px solid #fecaca;border-radius:8px;padding:9px 12px;font-size:11.5px;margin-top:10px;font-weight:600}
+.login-err.on{display:block}
+
+.demo-section{padding:14px 28px 24px;border-top:1px solid var(--border);background:var(--s2)}
+.demo-label{font-size:9.5px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.demo-label::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--t3)}
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.demo-user{background:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .12s;text-align:left;font-family:inherit;width:100%}
+.demo-user:hover{border-color:var(--blue);background:var(--blue2);transform:translateX(2px)}
+.du-av{width:26px;height:26px;border-radius:50%;color:#fff;font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.du-meta{flex:1;min-width:0}
+.du-name{font-size:11px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.du-role{font-size:9.5px;color:var(--t2)}
+
+.shell-foot{padding:14px 24px;font-size:11px;color:var(--t2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-top:1px solid rgba(13,45,110,.06);background:rgba(255,255,255,.4)}
+.shell-foot .ft-status{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.ft-dot{width:7px;height:7px;border-radius:50%;background:var(--t3)}
+.ft-dot.live{background:var(--green);box-shadow:0 0 8px rgba(22,101,52,.5)}
+.ft-dot.demo{background:#d97706}
+
+/* ════════ MODULE PICKER (post-login) ════════ */
+.picker{display:none;min-height:100vh;flex-direction:column;
+  background:
+    radial-gradient(900px 500px at 0% 0%, rgba(24,73,169,.1), transparent 55%),
+    radial-gradient(900px 500px at 100% 100%, rgba(22,101,52,.08), transparent 60%),
+    var(--bg);
+}
+.picker.on{display:flex}
+.picker-bar{padding:14px 28px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;box-shadow:0 1px 0 rgba(13,45,110,.04)}
+.picker-bar .you{display:flex;align-items:center;gap:9px;background:var(--s2);padding:5px 14px 5px 5px;border-radius:20px;border:1px solid var(--border)}
+.picker-bar .you-av{width:30px;height:30px;border-radius:50%;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:11.5px}
+.picker-bar .you-meta{font-size:12px}
+.picker-bar .you-nm{font-weight:700;color:var(--text)}
+.picker-bar .you-rl{font-size:10.5px;color:var(--t2)}
+.picker-out{background:var(--surface);border:1px solid var(--border);padding:6px 12px;border-radius:8px;font-size:11.5px;cursor:pointer;color:var(--t2);font-weight:600;font-family:inherit}
+.picker-out:hover{background:var(--red2);color:var(--red);border-color:#fecaca}
+
+.picker-body{flex:1;max-width:1200px;margin:0 auto;padding:38px 24px;width:100%}
+.picker-title{font-size:24px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.01em}
+.picker-title .accent{background:linear-gradient(135deg,#1849a9,#6b21a8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.picker-sub{font-size:13.5px;color:var(--t2);margin-bottom:30px;max-width:680px;line-height:1.55}
+
+.picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:36px}
+.pt-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:22px;cursor:pointer;transition:all .2s;position:relative;text-decoration:none;color:inherit;display:block;overflow:hidden}
+.pt-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--accent,var(--blue))}
+.pt-card:hover{transform:translateY(-3px);box-shadow:0 18px 36px rgba(13,45,110,.12);border-color:var(--accent,var(--blue))}
+.pt-card.locked{opacity:.5;cursor:not-allowed}
+.pt-card.locked:hover{transform:none;box-shadow:none;border-color:var(--border)}
+.pt-icon{width:50px;height:50px;border-radius:12px;background:var(--accent-bg,var(--blue2));color:var(--accent,var(--blue));display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px}
+.pt-card h3{font-size:16px;font-weight:800;color:var(--text);margin-bottom:4px}
+.pt-card .pt-sub{font-size:11px;color:var(--accent,var(--blue));font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.pt-card p{font-size:12.5px;color:var(--t2);line-height:1.6;margin-bottom:14px;min-height:60px}
+.pt-card .pt-meta{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--t3);font-weight:600;padding-top:12px;border-top:1px dashed var(--border)}
+.pt-card .pt-meta .pt-go{color:var(--accent,var(--blue));font-weight:700}
+.pt-card .pt-badge{position:absolute;top:14px;right:14px;font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:10px;letter-spacing:.04em;text-transform:uppercase}
+.pt-card .pt-badge.live{background:var(--green2);color:var(--green);border:1px solid #bbf7d0}
+.pt-card .pt-badge.soon{background:var(--s3);color:var(--t2);border:1px solid var(--border)}
+.pt-card .pt-badge.beta{background:var(--orange2);color:var(--orange);border:1px solid #fed7aa}
+
+.qa-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.qa{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;text-decoration:none;color:inherit;transition:all .15s}
+.qa:hover{border-color:var(--blue);background:var(--blue2)}
+.qa .qa-ic{font-size:18px;margin-bottom:6px}
+.qa h4{font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:2px}
+.qa p{font-size:10.5px;color:var(--t2);line-height:1.4}
+
+.sec-h{font-size:11px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.sec-h::after{content:'';flex:1;height:1px;background:var(--border)}
+
+@media (max-width:980px){
+  .shell-main{grid-template-columns:1fr;padding:30px 16px;gap:30px}
+  .hero{padding:0}
+  .login-wrap{padding:0}
+  .hero h1{font-size:26px}
+  .module-grid{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .demo-grid{grid-template-columns:1fr}
+  .hero-stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SIGN-IN SHELL ═══════════════ -->
+<div class="shell" id="shellSignin">
+  <div class="shell-bar">
+    <div class="brand">
+      <div class="brand-mark">P</div>
+      <span>PSMS Group ERP</span>
+      <span class="brand-sub">v3 · Live</span>
+    </div>
+    <div class="shell-bar-spacer"></div>
+    <small>Need help?</small>
+    <a href="mailto:it@psms.mv">it@psms.mv</a>
+  </div>
+
+  <div class="shell-main">
+    <!-- LEFT: hero / module preview -->
+    <div class="hero">
+      <div class="hero-eyebrow"><span class="pulse"></span>System online · Neon DB connected</div>
+      <h1>One ERP. <span class="accent">Every module</span>.<br>Real-time integrated.</h1>
+      <p class="hero-lead">Sign in once and access the full PSMS Group suite — POS sales auto-post to journals, GRNs flow into payables, payroll and depreciation hit the P&amp;L automatically. Built for PSMS Trading, PPM, Maldex &amp; SCC.</p>
+
+      <div class="module-grid">
+        <div class="module-tile tile-accounts" onclick="previewModule('accounts')">
+          <div class="mt-go">→</div>
+          <div class="mt-row">
+            <div class="mt-icon">📒</div>
+            <div>
+              <h3>AccountsCore</h3>
+              <div class="mt-sub">Financial Hub</div>
+            </div>
+          </div>
+          <p>Full chart of accounts, GL, sub-ledgers and the five IFRS statements.</p>
+          <div class="mt-tags">
+            <span class="mt-tag">P&amp;L</span><span class="mt-tag">SoFP</span>
+            <span class="mt-tag">Cash Flow</span><span class="mt-tag">Notes</span>
+          </div>
+        </div>
+
+        <div class="module-tile tile-pos" onclick="previewModule('pos')">
+          <div class="mt-go">→</div>
+          <div class="mt-row">
+            <div class="mt-icon">🛒</div>
+            <div>
+              <h3>RetailFlow POS</h3>
+              <div class="mt-sub">Point of Sale</div>
+            </div>
+          </div>
+          <p>Cashier-friendly POS with auto-journal posting and MIRA GST reports.</p>
+          <div class="mt-tags">
+            <span class="mt-tag">Sales</span><span class="mt-tag">Stock</span>
+            <span class="mt-tag">Cash Drawer</span><span class="mt-tag">GST</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="h-stat"><div class="hs-l">Legal Entities</div><div class="hs-v">4</div></div>
+        <div class="h-stat"><div class="hs-l">GL Accounts</div><div class="hs-v">86+</div></div>
+        <div class="h-stat"><div class="hs-l">Base Currency</div><div class="hs-v">MVR</div></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: login form -->
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="login-head">
+          <h2>Sign in</h2>
+          <p>Access your unified PSMS ERP workspace.</p>
+        </div>
+        <div class="login-body">
+          <form id="loginForm" onsubmit="event.preventDefault();doLogin()">
+            <div class="fg">
+              <label class="fl">Email</label>
+              <div class="fi-wrap">
+                <span class="fi-ic">✉</span>
+                <input class="fi has-icon" type="email" id="email" autocomplete="username" placeholder="you@psms.mv" value="cfo@psms.mv" required>
+              </div>
+            </div>
+            <div class="fg">
+              <label class="fl">Password</label>
+              <div class="fi-wrap">
+                <span class="fi-ic">🔒</span>
+                <input class="fi has-icon" type="password" id="pwd" autocomplete="current-password" placeholder="••••••••" value="CFO@2026" required>
+              </div>
+            </div>
+            <div class="row-meta">
+              <label><input type="checkbox" id="remember" checked> Remember me</label>
+              <a href="#" onclick="event.preventDefault();alert('Reset link will be sent by IT — contact it@psms.mv')">Forgot password?</a>
+            </div>
+            <button type="submit" class="login-btn" id="signBtn">
+              <span class="spinner"></span>
+              <span class="lbl">Sign In to PSMS ERP →</span>
+            </button>
+            <div class="login-err" id="loginErr"></div>
+          </form>
+        </div>
+        <div class="demo-section">
+          <div class="demo-label">Demo accounts · click to fill</div>
+          <div class="demo-grid">
+            <button type="button" class="demo-user" onclick="fillDemo('cfo@psms.mv','CFO@2026')">
+              <div class="du-av" style="background:#0d2d6e">AR</div>
+              <div class="du-meta"><div class="du-name">Aishath Rasheeda</div><div class="du-role">CFO · Full Access</div></div>
+            </button>
+            <button type="button" class="demo-user" onclick="fillDemo('ctlr@psms.mv','Ctlr@2026')">
+              <div class="du-av" style="background:#1849a9">MF</div>
+              <div class="du-meta"><div class="du-name">Mohamed Faisal</div><div class="du-role">Financial Controller</div></div>
+            </button>
+            <button type="button" class="demo-user" onclick="fillDemo('cashier@psms.mv','Cash@2026')">
+              <div class="du-av" style="background:#166534">SI</div>
+              <div class="du-meta"><div class="du-name">Shamil Ibrahim</div><div class="du-role">Cashier · POS only</div></div>
+            </button>
+            <button type="button" class="demo-user" onclick="fillDemo('mgr@psms.mv','Mgr@2026')">
+              <div class="du-av" style="background:#92400e">FM</div>
+              <div class="du-meta"><div class="du-name">Fathimath Manike</div><div class="du-role">Store Manager</div></div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="shell-foot">
+    <div>© 2026 PSMS Group · Male', Maldives · All rights reserved</div>
+    <div class="ft-status">
+      <span class="ft-dot" id="apiDot"></span>
+      <span id="apiStatus">Checking backend…</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ POST-LOGIN MODULE PICKER ═══════════════ -->
+<div class="picker" id="shellPicker">
+  <div class="picker-bar">
+    <div class="brand">
+      <div class="brand-mark">P</div>
+      <span>PSMS Group ERP</span>
+      <span class="brand-sub" id="topEnvBadge">v3</span>
+    </div>
+    <div class="shell-bar-spacer"></div>
+    <div class="you">
+      <div class="you-av" id="meAv">AR</div>
+      <div class="you-meta">
+        <div class="you-nm" id="meNm">—</div>
+        <div class="you-rl" id="meRl">—</div>
+      </div>
+    </div>
+    <button class="picker-out" onclick="doLogout()">Sign out</button>
+  </div>
+
+  <div class="picker-body">
+    <div class="picker-title">Welcome back, <span class="accent" id="welcomeName">there</span></div>
+    <div class="picker-sub">Choose a module to open. Your data is shared across all modules — a POS sale you make today posts straight into AccountsCore as a journal entry.</div>
+
+    <div class="sec-h">Core modules</div>
+    <div class="picker-grid" id="moduleGrid"></div>
+
+    <div class="sec-h">Quick actions</div>
+    <div class="qa-row">
+      <a href="#" class="qa" onclick="event.preventDefault();openModule('accounts','#journal')">
+        <div class="qa-ic">📝</div>
+        <h4>Post a Journal</h4>
+        <p>Manual GL entry</p>
+      </a>
+      <a href="#" class="qa" onclick="event.preventDefault();openModule('pos','#pos')">
+        <div class="qa-ic">🛒</div>
+        <h4>New Sale</h4>
+        <p>Quick POS checkout</p>
+      </a>
+      <a href="#" class="qa" onclick="event.preventDefault();openModule('accounts','#pl')">
+        <div class="qa-ic">📈</div>
+        <h4>View P&amp;L</h4>
+        <p>YTD performance</p>
+      </a>
+      <a href="#" class="qa" onclick="event.preventDefault();openModule('accounts','#fs-pack')">
+        <div class="qa-ic">📑</div>
+        <h4>Financial Pack</h4>
+        <p>All 5 statements</p>
+      </a>
+      <a href="#" class="qa" onclick="event.preventDefault();openModule('pos','#stock')">
+        <div class="qa-ic">📦</div>
+        <h4>Stock Levels</h4>
+        <p>Inventory check</p>
+      </a>
+      <a href="#" class="qa" onclick="event.preventDefault();openModule('accounts','#bankrec')">
+        <div class="qa-ic">🏦</div>
+        <h4>Bank Reconcile</h4>
+        <p>Match statements</p>
+      </a>
+    </div>
+  </div>
+
+  <div class="shell-foot">
+    <div>© 2026 PSMS Group · Signed in as <b id="footUser">—</b></div>
+    <div class="ft-status">
+      <span class="ft-dot live"></span>
+      <span>System live · auto-sync enabled</span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════ STATE & API CLIENT ═══════════════ */
+const ME_KEY  = 'psms_session';
+const API     = ''; // same origin
+
+// Detect demo mode (no backend deployed yet)
+let DEMO_MODE = false;
+
+async function pingBackend(){
+  try {
+    const r = await fetch(API+'/api/auth/me', {credentials:'include'});
+    if(r.status === 503) { DEMO_MODE = true; }
+    setApiStatus(true);
+  } catch(e){
+    DEMO_MODE = true;
+    setApiStatus(false);
+  }
+}
+function setApiStatus(live){
+  const dot = document.getElementById('apiDot');
+  const lbl = document.getElementById('apiStatus');
+  if(live){ dot.className='ft-dot live'; lbl.textContent = DEMO_MODE ? 'Demo mode · localStorage' : 'Backend connected · Neon DB'; }
+  else    { dot.className='ft-dot demo'; lbl.textContent = 'Demo mode · localStorage'; DEMO_MODE = true; }
+}
+
+// Demo user table (fallback if no backend)
+const DEMO_USERS = {
+  'cfo@psms.mv':     { pwd:'CFO@2026',  name:'Aishath Rasheeda', short:'AR', role:'cfo',        label:'Chief Financial Officer', color:'#0d2d6e', access:['accounts','pos','payflow','hr'] },
+  'ctlr@psms.mv':    { pwd:'Ctlr@2026', name:'Mohamed Faisal',   short:'MF', role:'controller', label:'Financial Controller',    color:'#1849a9', access:['accounts','pos','payflow'] },
+  'acct@psms.mv':    { pwd:'Acct@2026', name:'Priya Sharma',     short:'PS', role:'accountant', label:'Senior Accountant',       color:'#166534', access:['accounts','payflow'] },
+  'cashier@psms.mv': { pwd:'Cash@2026', name:'Shamil Ibrahim',   short:'SI', role:'cashier',    label:'Cashier · POS only',      color:'#166534', access:['pos'] },
+  'mgr@psms.mv':     { pwd:'Mgr@2026',  name:'Fathimath Manike', short:'FM', role:'manager',    label:'Store Manager',           color:'#92400e', access:['pos','accounts'] },
+  'audit@psms.mv':   { pwd:'Audit@2026',name:'External Auditor', short:'EA', role:'auditor',    label:'Auditor · Read-only',     color:'#6b21a8', access:['accounts'] }
+};
+
+const MODULES = [
+  { id:'accounts', label:'AccountsCore',  sub:'Financial Hub',     icon:'📒', accent:'#1849a9', bg:'#eef2fc',
+    desc:'Chart of accounts, journal entries, sub-ledgers and the five IFRS-compliant financial statements with consolidation.',
+    meta:'~7,200 lines · React',
+    status:'live', file:'accounts.html' },
+  { id:'pos', label:'RetailFlow POS', sub:'Point of Sale', icon:'🛒', accent:'#166534', bg:'#f0fdf4',
+    desc:'Cashier interface, inventory, registers, returns and GST reporting. Sales auto-post into AccountsCore.',
+    meta:'~7,900 lines · Vanilla',
+    status:'live', file:'pos.html' },
+  { id:'payflow', label:'PayFlow Pro', sub:'Payment Vouchers', icon:'💳', accent:'#92400e', bg:'#fffbeb',
+    desc:'Payment voucher workflow with approval routing, cheque printing and ledger restrictions.',
+    meta:'In production · Beta',
+    status:'beta', file:null },
+  { id:'hr', label:'PeopleFlow HR', sub:'HR & Payroll', icon:'👥', accent:'#6b21a8', bg:'#faf5ff',
+    desc:'Employees, leave, payroll runs and monthly accruals fed into AccountsCore.',
+    meta:'Coming next quarter',
+    status:'soon', file:null }
+];
+
+/* ═══════════════ LOGIN ═══════════════ */
+function fillDemo(e,p){
+  document.getElementById('email').value = e;
+  document.getElementById('pwd').value = p;
+  document.getElementById('signBtn').focus();
+}
+function previewModule(id){ document.getElementById('email').focus(); }
+
+async function doLogin(){
+  const email = document.getElementById('email').value.trim().toLowerCase();
+  const pwd   = document.getElementById('pwd').value;
+  const btn   = document.getElementById('signBtn');
+  const err   = document.getElementById('loginErr');
+  err.classList.remove('on');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  let session = null;
+
+  // Try backend first
+  if(!DEMO_MODE){
+    try {
+      const r = await fetch(API+'/api/auth/login', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        credentials:'include',
+        body: JSON.stringify({email, password: pwd})
+      });
+      if(r.ok){
+        session = await r.json();
+      } else {
+        const data = await r.json().catch(()=>({}));
+        throw new Error(data.error || 'Invalid credentials');
+      }
+    } catch(e){
+      // fall through to demo check
+      if(!DEMO_USERS[email]){
+        err.textContent = '⚠ ' + (e.message || 'Backend unavailable');
+        err.classList.add('on');
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        return;
+      }
+    }
+  }
+
+  // Demo fallback
+  if(!session){
+    const u = DEMO_USERS[email];
+    if(!u || u.pwd !== pwd){
+      err.textContent = '⚠ Invalid email or password.';
+      err.classList.add('on');
+      btn.classList.remove('loading');
+      btn.disabled = false;
+      return;
+    }
+    session = { email, name:u.name, short:u.short, role:u.role, label:u.label, color:u.color, access:u.access, demo:true };
+  }
+
+  // small delay to feel real
+  await new Promise(r=>setTimeout(r,350));
+
+  saveSession(session);
+  showPicker(session);
+  btn.classList.remove('loading');
+  btn.disabled = false;
+}
+
+function saveSession(s){
+  try { localStorage.setItem(ME_KEY, JSON.stringify(s)); } catch(e){}
+}
+function loadSession(){
+  try { return JSON.parse(localStorage.getItem(ME_KEY) || 'null'); } catch(e){ return null; }
+}
+
+function doLogout(){
+  if(!confirm('Sign out of PSMS ERP?')) return;
+  fetch(API+'/api/auth/logout', {method:'POST', credentials:'include'}).catch(()=>{});
+  localStorage.removeItem(ME_KEY);
+  location.href = '/';
+}
+
+/* ═══════════════ MODULE PICKER ═══════════════ */
+function showPicker(s){
+  document.getElementById('shellSignin').style.display = 'none';
+  document.getElementById('shellPicker').classList.add('on');
+
+  const av = document.getElementById('meAv');
+  av.textContent = s.short;
+  av.style.background = s.color || '#1849a9';
+  document.getElementById('meNm').textContent = s.name;
+  document.getElementById('meRl').textContent = s.label || s.role;
+  document.getElementById('welcomeName').textContent = s.name.split(' ')[0];
+  document.getElementById('footUser').textContent = s.name + ' (' + s.label + ')';
+  document.getElementById('topEnvBadge').textContent = s.demo ? 'v3 · Demo' : 'v3 · Live';
+
+  // Build module cards filtered by access
+  const grid = document.getElementById('moduleGrid');
+  const access = s.access || ['accounts','pos'];
+  grid.innerHTML = MODULES.map(m=>{
+    const allowed = access.includes(m.id);
+    const locked = !allowed || m.status === 'soon';
+    const badge = m.status === 'live' ? '<span class="pt-badge live">● Live</span>'
+                : m.status === 'beta' ? '<span class="pt-badge beta">Beta</span>'
+                : '<span class="pt-badge soon">Coming Soon</span>';
+    return `
+      <a href="#" class="pt-card ${locked?'locked':''}" style="--accent:${m.accent};--accent-bg:${m.bg}"
+         onclick="event.preventDefault();${locked?`alert('${allowed?'Module not deployed yet':'You don\\'t have access to this module'}')`:`openModule('${m.id}')`}">
+        ${badge}
+        <div class="pt-icon">${m.icon}</div>
+        <h3>${m.label}</h3>
+        <div class="pt-sub">${m.sub}</div>
+        <p>${m.desc}</p>
+        <div class="pt-meta">
+          <span>${m.meta}</span>
+          <span class="pt-go">${locked?'—':'Open →'}</span>
+        </div>
+      </a>`;
+  }).join('');
+}
+
+function openModule(id, hash){
+  const m = MODULES.find(x=>x.id===id);
+  if(!m || !m.file){ alert('Module not deployed yet.'); return; }
+  location.href = '/' + m.file + (hash||'');
+}
+
+/* ═══════════════ BOOT ═══════════════ */
+window.addEventListener('DOMContentLoaded', async ()=>{
+  await pingBackend();
+  const s = loadSession();
+  if(s){ showPicker(s); }
+});
+
+// Optional keyboard niceties
+document.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && document.activeElement?.id==='email'){
+    document.getElementById('pwd').focus();
+  }
+});
+</script>
+
+</body>
+</html>
