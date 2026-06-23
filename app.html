@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Workspace · YenuERP</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f6f9;--surface:#fff;--s2:#f0f2f6;--s3:#e8ebf0;
+  --border:#dde1e8;--border2:#c8cdd8;
+  --text:#1c2030;--t2:#5c6478;--t3:#9ba3b5;
+  --blue:#1849a9;--blue2:#eef2fc;--blue3:#0d2d6e;
+  --green:#166534;--green2:#f0fdf4;
+  --amber:#92400e;--amber2:#fffbeb;
+  --red:#991b1b;--red2:#fef2f2;
+}
+html,body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-height:100vh}
+.app-shell{min-height:100vh;display:flex;flex-direction:column;
+  background:radial-gradient(900px 500px at 0% 0%, rgba(24,73,169,.1), transparent 55%),var(--bg);
+}
+.topbar{padding:14px 28px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;box-shadow:0 1px 0 rgba(13,45,110,.04)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--blue3);font-size:14px}
+.brand-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#0d2d6e,#1849a9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px}
+.co-pill{display:inline-flex;align-items:center;gap:7px;background:var(--blue2);border:1px solid #c7d6f0;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;color:var(--blue3)}
+.spacer{flex:1}
+.you{display:flex;align-items:center;gap:9px;background:var(--s2);padding:5px 14px 5px 5px;border-radius:20px;border:1px solid var(--border)}
+.you-av{width:30px;height:30px;border-radius:50%;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:11.5px}
+.you-meta{font-size:12px}
+.you-nm{font-weight:700;color:var(--text)}
+.you-rl{font-size:10.5px;color:var(--t2)}
+.btn{background:var(--surface);border:1px solid var(--border);padding:6px 12px;border-radius:8px;font-size:11.5px;cursor:pointer;color:var(--t2);font-weight:600;font-family:inherit}
+.btn:hover{background:var(--red2);color:var(--red);border-color:#fecaca}
+
+/* Trial banner */
+.trial-banner{background:linear-gradient(135deg,#fffbeb,#fef3c7);border-bottom:1px solid #fde68a;padding:11px 28px;display:flex;align-items:center;gap:14px;font-size:12.5px}
+.trial-banner.urgent{background:linear-gradient(135deg,#fef2f2,#fee2e2);border-bottom-color:#fecaca}
+.trial-banner.expired{background:linear-gradient(135deg,#fef2f2,#fecaca);border-bottom-color:#fca5a5}
+.trial-banner .ic{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;font-size:14px}
+.trial-banner .msg{flex:1;color:#7c2d12;font-weight:600;line-height:1.45}
+.trial-banner .msg b{font-weight:800}
+.trial-banner.urgent .msg{color:var(--red)}
+.trial-banner .upg{background:#7c2d12;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+.trial-banner.urgent .upg{background:var(--red)}
+.trial-banner .upg:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+
+.body{flex:1;max-width:1200px;margin:0 auto;padding:38px 24px;width:100%}
+.welcome{font-size:24px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.01em}
+.welcome .accent{background:linear-gradient(135deg,#1849a9,#6b21a8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-size:13.5px;color:var(--t2);margin-bottom:30px;max-width:680px;line-height:1.55}
+
+.sec-h{font-size:11px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:11px;display:flex;align-items:center;gap:8px}
+.sec-h::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:36px}
+.card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:22px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;text-decoration:none;color:inherit;display:block}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--accent,var(--blue))}
+.card:hover{transform:translateY(-3px);box-shadow:0 18px 36px rgba(13,45,110,.12);border-color:var(--accent,var(--blue))}
+.card.locked{opacity:.55;cursor:not-allowed}
+.card.locked:hover{transform:none;box-shadow:none;border-color:var(--border)}
+.card-ic{width:50px;height:50px;border-radius:12px;background:var(--accent-bg,var(--blue2));color:var(--accent,var(--blue));display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px}
+.card h3{font-size:16px;font-weight:800;color:var(--text);margin-bottom:4px}
+.card .card-sub{font-size:11px;color:var(--accent,var(--blue));font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.card p{font-size:12.5px;color:var(--t2);line-height:1.6;margin-bottom:14px;min-height:60px}
+.card .meta{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--t3);font-weight:600;padding-top:12px;border-top:1px dashed var(--border)}
+.card .meta .go{color:var(--accent,var(--blue));font-weight:700}
+.card .badge{position:absolute;top:14px;right:14px;font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:10px;letter-spacing:.04em;text-transform:uppercase;background:var(--green2);color:var(--green);border:1px solid #bbf7d0}
+
+.qa-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.qa{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;text-decoration:none;color:inherit;transition:all .15s;cursor:pointer}
+.qa:hover{border-color:var(--blue);background:var(--blue2)}
+.qa .qa-ic{font-size:18px;margin-bottom:6px}
+.qa h4{font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:2px}
+.qa p{font-size:10.5px;color:var(--t2);line-height:1.4}
+
+.foot{padding:14px 28px;font-size:11px;color:var(--t2);display:flex;justify-content:space-between;border-top:1px solid var(--border);background:#fff;flex-wrap:wrap;gap:10px}
+
+/* Upgrade modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(13,45,110,.55);z-index:100;align-items:flex-start;justify-content:center;padding:50px 20px;overflow-y:auto}
+.modal-bg.on{display:flex}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:560px;box-shadow:0 30px 80px rgba(0,0,0,.3);overflow:hidden}
+.m-head{padding:18px 22px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#0d2d6e,#1849a9);color:#fff}
+.m-head h3{font-size:17px;font-weight:800;margin-bottom:3px}
+.m-head p{font-size:12px;opacity:.85}
+.m-body{padding:22px}
+.m-foot{padding:14px 22px;border-top:1px solid var(--border);background:var(--s2);display:flex;justify-content:flex-end;gap:8px}
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">Y</div>
+      <span>YenuERP</span>
+    </div>
+    <div class="co-pill" id="coPill">—</div>
+    <div class="spacer"></div>
+    <div class="you">
+      <div class="you-av" id="meAv">—</div>
+      <div class="you-meta">
+        <div class="you-nm" id="meNm">—</div>
+        <div class="you-rl" id="meRl">—</div>
+      </div>
+    </div>
+    <button class="btn" onclick="signOut()">Sign out</button>
+  </div>
+
+  <div id="trialBanner" class="trial-banner" style="display:none">
+    <div class="ic">⏳</div>
+    <div class="msg" id="trialMsg">—</div>
+    <button class="upg" onclick="showUpgrade()">Upgrade now →</button>
+  </div>
+
+  <div class="body">
+    <div class="welcome">Welcome back, <span class="accent" id="welcomeName">there</span></div>
+    <div class="sub" id="welcomeSub">Choose a module to open. All your data is private to your company's workspace.</div>
+
+    <div class="sec-h">Your modules</div>
+    <div class="grid" id="moduleGrid"></div>
+
+    <div class="sec-h">Quick actions</div>
+    <div class="qa-row">
+      <a href="/accounts.html" class="qa">
+        <div class="qa-ic">📝</div><h4>Post a Journal</h4><p>Manual GL entry</p>
+      </a>
+      <a href="/pos.html" class="qa">
+        <div class="qa-ic">🛒</div><h4>New Sale</h4><p>Quick POS checkout</p>
+      </a>
+      <a href="/accounts.html" class="qa">
+        <div class="qa-ic">📈</div><h4>View P&amp;L</h4><p>YTD performance</p>
+      </a>
+      <a href="/accounts.html" class="qa">
+        <div class="qa-ic">📑</div><h4>Financial Pack</h4><p>All 5 statements</p>
+      </a>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div>© 2026 YenuERP · <span id="footUser">—</span></div>
+    <div id="footPlan">—</div>
+  </div>
+</div>
+
+<!-- Upgrade modal -->
+<div class="modal-bg" id="upgradeBg" onclick="if(event.target===this)closeUpgrade()">
+  <div class="modal">
+    <div class="m-head">
+      <h3>Upgrade your subscription</h3>
+      <p>Stay on YenuERP and keep all your data</p>
+    </div>
+    <div class="m-body">
+      <p style="margin-bottom:16px;font-size:13px;color:var(--t2)">Pick a plan to continue. Your trial data, settings and customizations all stay with you.</p>
+      <div id="planList" style="display:flex;flex-direction:column;gap:10px"></div>
+      <div style="margin-top:18px;padding:12px;background:var(--blue2);border-radius:8px;font-size:11.5px;color:var(--blue3);line-height:1.5">
+        💳 Payment will be invoiced separately by our sales team. You won't be charged automatically — we'll send you an invoice within 24 hours.
+      </div>
+    </div>
+    <div class="m-foot">
+      <button class="btn" onclick="closeUpgrade()" style="color:var(--t2)">Maybe later</button>
+      <button class="btn" onclick="alert('Contact sales: sales@yenuerp.mv')" style="background:var(--blue);color:#fff;border-color:var(--blue)">Contact sales</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ME_KEY = 'psms_session';
+const TENANTS_KEY = 'yenuerp_tenants';
+const ACTIVE_KEY = 'yenuerp_active';
+
+const PLAN_PRICES = { starter: 499, business: 1499, enterprise: 4999 };
+const PLAN_LABELS = { starter: 'Starter', business: 'Business', enterprise: 'Enterprise' };
+
+const MODULES = [
+  { id:'setup', label:'Company Setup', sub:'Configure', icon:'⚙️', accent:'#92400e', bg:'#fffbeb',
+    desc:'Set up your chart of accounts, products, customers, tax rates and team. The starting point for new workspaces.',
+    meta:'Setup module · ready', file:'setup.html', minPlan:'starter', alwaysOpen:true },
+  { id:'accounts', label:'AccountsCore', sub:'Financial Hub', icon:'📒', accent:'#1849a9', bg:'#eef2fc',
+    desc:'Chart of accounts, journal entries, sub-ledgers and the five IFRS-compliant financial statements with consolidation.',
+    meta:'Full module · ready', file:'accounts.html', minPlan:'starter' },
+  { id:'pos', label:'RetailFlow POS', sub:'Point of Sale', icon:'🛒', accent:'#166534', bg:'#f0fdf4',
+    desc:'Cashier interface, inventory, registers, returns and GST reporting. Sales auto-post into AccountsCore.',
+    meta:'Full module · ready', file:'pos.html', minPlan:'starter' },
+  { id:'payflow', label:'PayFlow Pro', sub:'Payment Vouchers', icon:'💳', accent:'#92400e', bg:'#fffbeb',
+    desc:'Payment voucher workflow with multi-level approval and cheque printing.',
+    meta:'Coming soon', file:null, minPlan:'business' },
+  { id:'hr', label:'PeopleFlow HR', sub:'HR & Payroll', icon:'👥', accent:'#6b21a8', bg:'#faf5ff',
+    desc:'Employees, leave, payroll runs and monthly accruals fed into AccountsCore.',
+    meta:'Coming soon', file:null, minPlan:'business' }
+];
+
+// ── Load session ──
+let session = null;
+try { session = JSON.parse(localStorage.getItem(ME_KEY) || 'null'); } catch(e){}
+if (!session) { location.replace('/'); }
+
+let tenants = {};
+try { tenants = JSON.parse(localStorage.getItem(TENANTS_KEY) || '{}'); } catch(e){}
+const tenant = session.tenant ? tenants[session.tenant] : null;
+
+// Compute trial days
+function daysBetween(a,b){ return Math.ceil((new Date(b)-new Date(a))/86400000); }
+const trialDaysLeft = session.trialEnd ? daysBetween(new Date(), session.trialEnd) : null;
+
+// ── Render ──
+function init(){
+  const av = document.getElementById('meAv');
+  av.textContent = session.short || (session.name || 'U')[0];
+  av.style.background = session.color || '#1849a9';
+  document.getElementById('meNm').textContent = session.name;
+  document.getElementById('meRl').textContent = session.label || session.role;
+  document.getElementById('welcomeName').textContent = (session.name||'there').split(' ')[0];
+  document.getElementById('coPill').textContent = session.coName || 'Workspace';
+  document.getElementById('footUser').textContent = (session.coName||'') + ' · ' + (session.email||'');
+  document.getElementById('footPlan').textContent =
+    session.plan ? `Plan: ${PLAN_LABELS[session.plan]||session.plan}` + (trialDaysLeft!=null && trialDaysLeft>0 ? ` · ${trialDaysLeft} day${trialDaysLeft===1?'':'s'} left in trial` : '')
+                 : 'Demo mode';
+
+  if (session.impersonated) {
+    document.getElementById('coPill').textContent = '⚡ ADMIN IMPERSONATING: ' + (session.coName||'');
+    document.getElementById('coPill').style.background = '#fef3c7';
+    document.getElementById('coPill').style.color = '#92400e';
+    document.getElementById('coPill').style.borderColor = '#fde68a';
+  }
+
+  renderTrialBanner();
+  renderFirstRunBanner();
+  renderModules();
+}
+
+function renderFirstRunBanner(){
+  // Check if this tenant has done basic setup
+  if (!session.tenant) return;
+  const prefix = 'tenant:' + session.tenant + ':setup:';
+  let coa = [];
+  let hasCompany = false;
+  try {
+    coa = JSON.parse(localStorage.getItem(prefix + 'coa') || '[]');
+    const co = JSON.parse(localStorage.getItem(prefix + 'company') || 'null');
+    hasCompany = !!co?.name;
+  } catch(e){}
+  if (coa.length > 0 && hasCompany) return;  // Setup looks done
+
+  const existing = document.getElementById('firstRunBanner');
+  if (existing) existing.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'firstRunBanner';
+  banner.innerHTML = `
+    <div style="background:linear-gradient(135deg,#eef2fc,#dbeafe);border:1px solid #c7d6f0;border-radius:14px;padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <div style="font-size:34px">🚀</div>
+      <div style="flex:1;min-width:240px">
+        <div style="font-size:15px;font-weight:800;color:var(--blue3);margin-bottom:4px">Welcome to YenuERP! Let's set up your company.</div>
+        <div style="font-size:12.5px;color:var(--t2);line-height:1.5">Before using AccountsCore or POS, configure your chart of accounts, products, and tax settings. It only takes a few minutes.</div>
+      </div>
+      <a href="/setup.html" class="btn" style="background:linear-gradient(135deg,#1849a9,#0d2d6e);color:#fff;border:none;padding:10px 18px;font-size:13px;font-weight:700;text-decoration:none;border-radius:8px;display:inline-flex;align-items:center;gap:6px">Start setup →</a>
+    </div>`;
+  const body = document.querySelector('.body');
+  const welcome = body.querySelector('.welcome');
+  body.insertBefore(banner, welcome);
+}
+
+function renderTrialBanner(){
+  const b = document.getElementById('trialBanner');
+  const m = document.getElementById('trialMsg');
+  if (!session.trialEnd || session.plan_status === 'active') { b.style.display = 'none'; return; }
+  b.style.display = 'flex';
+  if (trialDaysLeft < 0) {
+    b.className = 'trial-banner expired';
+    m.innerHTML = `<b>Your trial has ended.</b> ${Math.abs(trialDaysLeft)} day${Math.abs(trialDaysLeft)===1?'':'s'} ago. Modules are now read-only. Upgrade to keep using YenuERP.`;
+  } else if (trialDaysLeft <= 3) {
+    b.className = 'trial-banner urgent';
+    m.innerHTML = `<b>Only ${trialDaysLeft} day${trialDaysLeft===1?'':'s'} left in your free trial.</b> Upgrade to keep your data and continue working.`;
+  } else {
+    b.className = 'trial-banner';
+    m.innerHTML = `<b>${trialDaysLeft} days left</b> in your free trial · ${PLAN_LABELS[session.plan]||session.plan} plan · Trial ends ${new Date(session.trialEnd).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`;
+  }
+}
+
+const planRank = { starter:1, business:2, enterprise:3 };
+function moduleAllowedByPlan(mod){
+  return planRank[session.plan||'business'] >= planRank[mod.minPlan||'starter'];
+}
+
+function renderModules(){
+  const access = session.access || ['accounts','pos'];
+  const expired = trialDaysLeft != null && trialDaysLeft < 0 && session.plan_status !== 'active';
+
+  document.getElementById('moduleGrid').innerHTML = MODULES.map(m => {
+    const inAccess = access.includes(m.id);
+    const inPlan   = moduleAllowedByPlan(m);
+    const available = !!m.file;
+    const locked = !inAccess || !inPlan || !available || expired;
+    const reason = !inPlan ? 'Requires higher plan' : expired ? 'Trial expired — upgrade' : !available ? 'Coming soon' : !inAccess ? 'No access' : '';
+
+    return `
+      <a href="#" class="card ${locked?'locked':''}" style="--accent:${m.accent};--accent-bg:${m.bg}"
+         onclick="event.preventDefault();${locked?`alert('${reason}')`:`location.href='/${m.file}'`}">
+        <span class="badge">${expired?'Read-only':available?'● Ready':'Soon'}</span>
+        <div class="card-ic">${m.icon}</div>
+        <h3>${m.label}</h3>
+        <div class="card-sub">${m.sub}</div>
+        <p>${m.desc}</p>
+        <div class="meta">
+          <span>${m.meta}</span>
+          <span class="go">${locked?'—':'Open →'}</span>
+        </div>
+      </a>`;
+  }).join('');
+}
+
+function showUpgrade(){
+  document.getElementById('upgradeBg').classList.add('on');
+  document.getElementById('planList').innerHTML = ['starter','business','enterprise'].map(p => {
+    const cur = session.plan === p;
+    return `<div style="border:1.5px solid ${cur?'var(--blue)':'var(--border)'};border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;${cur?'background:var(--blue2)':''}">
+      <div style="flex:1">
+        <div style="font-weight:800;font-size:13px">${PLAN_LABELS[p]} ${cur?'<span style="color:var(--blue);font-size:10.5px;margin-left:6px;background:#fff;padding:2px 6px;border-radius:8px">CURRENT</span>':''}</div>
+        <div style="font-size:11px;color:var(--t2);margin-top:1px">Rf ${PLAN_PRICES[p].toLocaleString()}/month</div>
+      </div>
+      ${cur?'':`<button class="btn" style="background:var(--blue);color:#fff;border-color:var(--blue)" onclick="alert('Sales team will contact you')">Select</button>`}
+    </div>`;
+  }).join('');
+}
+function closeUpgrade(){ document.getElementById('upgradeBg').classList.remove('on'); }
+
+function signOut(){
+  if (!confirm('Sign out?')) return;
+  localStorage.removeItem(ME_KEY);
+  localStorage.removeItem(ACTIVE_KEY);
+  location.replace('/');
+}
+
+init();
+</script>
+
+</body>
+</html>
