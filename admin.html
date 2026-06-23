@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YenuERP · Admin Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f6f9;--surface:#fff;--s2:#f0f2f6;--border:#dde1e8;
+  --text:#1c2030;--t2:#5c6478;--t3:#9ba3b5;
+  --blue:#1849a9;--blue2:#eef2fc;--blue3:#0d2d6e;
+  --green:#166534;--green2:#f0fdf4;--green3:#dcfce7;
+  --amber:#92400e;--amber2:#fffbeb;
+  --red:#991b1b;--red2:#fef2f2;--red3:#fee2e2;
+  --purple:#6b21a8;--purple2:#faf5ff;
+}
+html,body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5}
+.topbar{background:linear-gradient(135deg,#0d2d6e,#1849a9);height:56px;padding:0 24px;color:#fff;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50;box-shadow:0 2px 8px rgba(13,45,110,.2)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff}
+.logo-mark{width:32px;height:32px;background:#fff;color:var(--blue3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px}
+.logo-text{font-size:15px;font-weight:800}
+.admin-badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:3px 9px;border-radius:14px;font-size:10px;font-weight:700;letter-spacing:.04em;margin-left:6px}
+.topbar-spacer{flex:1}
+.user-info{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);padding:5px 14px 5px 5px;border-radius:20px;font-size:12px;font-weight:600}
+.user-av{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+
+.main{max-width:1280px;margin:0 auto;padding:28px 24px}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:14px;flex-wrap:wrap}
+.page-title{font-size:22px;font-weight:800;color:var(--text);margin-bottom:4px}
+.page-sub{font-size:12.5px;color:var(--t2)}
+.refresh-btn{background:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;color:var(--t2);display:inline-flex;align-items:center;gap:6px;font-family:inherit}
+.refresh-btn:hover{border-color:var(--blue);color:var(--blue)}
+
+/* KPI Grid */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px 20px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent)}
+.kpi.blue{--accent:#1849a9}
+.kpi.green{--accent:#166534}
+.kpi.amber{--accent:#d97706}
+.kpi.purple{--accent:#6b21a8}
+.kpi-icon{width:36px;height:36px;border-radius:9px;background:var(--accent-bg);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:12px}
+.kpi.blue{--accent-bg:#eef2fc}
+.kpi.green{--accent-bg:#f0fdf4}
+.kpi.amber{--accent-bg:#fffbeb}
+.kpi.purple{--accent-bg:#faf5ff}
+.kpi-label{font-size:11px;color:var(--t2);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.kpi-value{font-size:26px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi-sub{font-size:11px;color:var(--t3);margin-top:5px;display:flex;align-items:center;gap:5px}
+.kpi-sub.up{color:var(--green)}
+.kpi-sub.down{color:var(--red)}
+
+/* Cards */
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:18px;overflow:hidden}
+.card-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.card-title{font-size:14px;font-weight:800;color:var(--text)}
+.card-sub{font-size:11.5px;color:var(--t2);margin-top:2px}
+
+/* Filter pills */
+.filter-row{display:flex;gap:6px;padding:12px 20px;border-bottom:1px solid var(--border);background:var(--s2)}
+.fp{background:#fff;border:1px solid var(--border);padding:5px 13px;border-radius:18px;font-size:11.5px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit}
+.fp:hover{border-color:var(--blue);color:var(--blue)}
+.fp.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.fp .ct{margin-left:5px;font-size:10px;opacity:.85;background:rgba(255,255,255,.18);padding:1px 6px;border-radius:8px}
+.fp:not(.on) .ct{background:var(--s3);color:var(--t3);opacity:1}
+
+/* Table */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:10px;font-weight:800;color:var(--t3);padding:10px 14px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;background:var(--s2)}
+td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.tenant-row td{cursor:pointer}
+.tenant-row:hover td{background:var(--blue2)}
+.co-cell{display:flex;align-items:center;gap:10px}
+.co-av{width:32px;height:32px;border-radius:8px;background:var(--blue2);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.co-name{font-weight:700;color:var(--text)}
+.co-slug{font-size:10.5px;color:var(--t3);font-family:'Consolas',monospace}
+.bdg{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap;letter-spacing:.02em}
+.bd-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+.b-trial{background:var(--amber2);color:var(--amber);border:1px solid #fde68a}
+.b-active{background:var(--green3);color:var(--green)}
+.b-paused{background:var(--s3);color:var(--t2)}
+.b-expired{background:var(--red3);color:var(--red)}
+.b-starter{background:var(--blue2);color:var(--blue)}
+.b-business{background:var(--purple2);color:var(--purple)}
+.b-enterprise{background:#fef3c7;color:#92400e}
+.days-left{font-weight:700}
+.days-left.warn{color:var(--amber)}
+.days-left.danger{color:var(--red)}
+.empty{padding:50px 20px;text-align:center;color:var(--t2)}
+.empty-ic{font-size:42px;opacity:.4;margin-bottom:10px}
+.empty-tt{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}
+.empty-sb{font-size:12px;color:var(--t3)}
+
+/* Action buttons */
+.row-actions{display:flex;gap:6px;justify-content:flex-end}
+.btn-xs{padding:5px 10px;font-size:10.5px;font-weight:700;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-family:inherit;color:var(--t2)}
+.btn-xs:hover{border-color:var(--blue);color:var(--blue);background:var(--blue2)}
+.btn-xs.danger:hover{border-color:var(--red);color:var(--red);background:var(--red2)}
+
+/* Right side panel */
+.layout{display:grid;grid-template-columns:1fr 320px;gap:18px}
+@media (max-width:1100px){.layout{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}}
+
+/* Plan distribution chart */
+.bar-stack{display:flex;height:24px;border-radius:6px;overflow:hidden;margin:14px 0}
+.bar-stack > div{display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;color:#fff}
+.legend{display:flex;flex-direction:column;gap:7px}
+.legend-row{display:flex;align-items:center;gap:8px;font-size:11.5px}
+.legend-dot{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+.legend-row .name{flex:1;color:var(--t2);font-weight:600}
+.legend-row .val{color:var(--text);font-weight:700;font-variant-numeric:tabular-nums}
+
+/* Activity feed */
+.activity{padding:6px 0}
+.act-item{padding:10px 20px;border-bottom:1px solid var(--border);font-size:12px;display:flex;gap:10px}
+.act-item:last-child{border-bottom:none}
+.act-ic{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.act-ic.signup{background:var(--green2);color:var(--green)}
+.act-ic.upgrade{background:var(--blue2);color:var(--blue)}
+.act-ic.churn{background:var(--red2);color:var(--red)}
+.act-ic.expire{background:var(--amber2);color:var(--amber)}
+.act-body{flex:1;min-width:0}
+.act-text{color:var(--text);line-height:1.45}
+.act-text b{font-weight:700}
+.act-time{font-size:10.5px;color:var(--t3);margin-top:2px}
+
+/* Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(13,45,110,.55);z-index:100;align-items:flex-start;justify-content:center;padding:50px 20px;overflow-y:auto}
+.modal-bg.on{display:flex}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:640px;box-shadow:0 30px 80px rgba(0,0,0,.3);overflow:hidden}
+.m-head{padding:18px 22px;border-bottom:1px solid var(--border);background:var(--s2)}
+.m-tt{font-size:16px;font-weight:800}
+.m-sb{font-size:11.5px;color:var(--t2);margin-top:2px}
+.m-body{padding:22px}
+.m-foot{padding:14px 22px;border-top:1px solid var(--border);background:var(--s2);display:flex;justify-content:flex-end;gap:8px}
+.m-row{display:grid;grid-template-columns:140px 1fr;gap:14px;padding:9px 0;border-bottom:1px dashed var(--border);font-size:12.5px}
+.m-row .lb{color:var(--t2);font-weight:600}
+.m-row .vl{color:var(--text);font-weight:600}
+
+/* Misc */
+.btn{padding:8px 14px;font-size:12px;font-weight:700;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text);font-family:inherit}
+.btn-p{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-p:hover{background:var(--blue3)}
+.btn-r{background:var(--red);color:#fff;border-color:var(--red)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/admin.html" class="logo">
+    <div class="logo-mark">Y</div>
+    <div class="logo-text">YenuERP</div>
+    <span class="admin-badge">⚡ ADMIN</span>
+  </a>
+  <div class="topbar-spacer"></div>
+  <div class="user-info">
+    <div class="user-av">DI</div>
+    <span>Dilantha · Owner</span>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-head">
+    <div>
+      <div class="page-title">SaaS Admin Dashboard</div>
+      <div class="page-sub">All customers, trials, and revenue across your YenuERP product</div>
+    </div>
+    <button class="refresh-btn" onclick="location.reload()">⟳ Refresh data</button>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpis">
+    <div class="kpi blue">
+      <div class="kpi-icon">🏢</div>
+      <div class="kpi-label">Total Customers</div>
+      <div class="kpi-value" id="kpiTotal">0</div>
+      <div class="kpi-sub" id="kpiTotalSub">0 active · 0 trial</div>
+    </div>
+    <div class="kpi amber">
+      <div class="kpi-icon">⏳</div>
+      <div class="kpi-label">Active Trials</div>
+      <div class="kpi-value" id="kpiTrials">0</div>
+      <div class="kpi-sub" id="kpiTrialsSub">Trial-to-paid: —</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-icon">💰</div>
+      <div class="kpi-label">MRR (potential)</div>
+      <div class="kpi-value" id="kpiMrr">Rf 0</div>
+      <div class="kpi-sub" id="kpiMrrSub">If all trials convert</div>
+    </div>
+    <div class="kpi purple">
+      <div class="kpi-icon">📈</div>
+      <div class="kpi-label">New This Week</div>
+      <div class="kpi-value" id="kpiWeek">0</div>
+      <div class="kpi-sub up" id="kpiWeekSub">Sign-ups in last 7 days</div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- LEFT: customer list -->
+    <div>
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <div class="card-title">All Customers</div>
+            <div class="card-sub">Click any row for full details</div>
+          </div>
+          <input type="search" placeholder="🔍 Search by company name or email…" oninput="searchTenants(this.value)" style="padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;width:280px;font-family:inherit;outline:none">
+        </div>
+        <div class="filter-row" id="filterRow">
+          <button class="fp on" onclick="setFilter('all',this)">All <span class="ct" id="ctAll">0</span></button>
+          <button class="fp" onclick="setFilter('trial',this)">Trial <span class="ct" id="ctTrial">0</span></button>
+          <button class="fp" onclick="setFilter('active',this)">Active <span class="ct" id="ctActive">0</span></button>
+          <button class="fp" onclick="setFilter('expired',this)">Expired <span class="ct" id="ctExpired">0</span></button>
+          <button class="fp" onclick="setFilter('expiring',this)">⚠ Expiring soon <span class="ct" id="ctExpiring">0</span></button>
+        </div>
+        <div class="tw">
+          <table id="tenantTable">
+            <thead><tr>
+              <th>Company</th>
+              <th>Industry</th>
+              <th>Plan</th>
+              <th>Status</th>
+              <th>Trial Ends</th>
+              <th>Joined</th>
+              <th></th>
+            </tr></thead>
+            <tbody id="tenantBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: sidebar -->
+    <div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Plan Distribution</div></div>
+        <div style="padding:16px 20px">
+          <div class="bar-stack" id="planBar"></div>
+          <div class="legend" id="planLegend"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-title">Recent Activity</div></div>
+        <div class="activity" id="activityFeed"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-title">Quick Actions</div></div>
+        <div style="padding:14px 20px;display:flex;flex-direction:column;gap:8px">
+          <button class="btn" onclick="exportCsv()">📥 Export customer list (CSV)</button>
+          <button class="btn" onclick="impersonateMenu()">👤 Impersonate a customer</button>
+          <a href="/" class="btn" style="text-align:center;text-decoration:none">🌐 View public site</a>
+          <button class="btn btn-r" onclick="clearAllData()">🗑️ Reset demo data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Tenant detail modal -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="m-head">
+      <div class="m-tt" id="modalTitle">Customer Details</div>
+      <div class="m-sb" id="modalSub">—</div>
+    </div>
+    <div class="m-body" id="modalBody"></div>
+    <div class="m-foot">
+      <button class="btn" onclick="closeModal()">Close</button>
+      <button class="btn btn-p" id="modalImpersonate">Open their workspace →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TENANTS_KEY = 'yenuerp_tenants';
+const ACTIVE_KEY  = 'yenuerp_active';
+let TENANTS = {};
+let CURRENT_FILTER = 'all';
+let SEARCH_Q = '';
+
+const PLAN_PRICES = { starter: 499, business: 1499, enterprise: 4999 };
+const PLAN_LABELS = { starter: 'Starter', business: 'Business', enterprise: 'Enterprise' };
+const PLAN_COLORS = { starter: '#1849a9', business: '#6b21a8', enterprise: '#92400e' };
+
+function loadTenants(){
+  try { TENANTS = JSON.parse(localStorage.getItem(TENANTS_KEY) || '{}'); }
+  catch(e){ TENANTS = {}; }
+}
+
+function daysBetween(a, b){
+  return Math.ceil((new Date(b) - new Date(a)) / 86400000);
+}
+
+function fmtDate(iso){
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+}
+
+function fmtRf(n){ return 'Rf ' + (n||0).toLocaleString(); }
+
+function tenantStatus(t){
+  if (t.status === 'active') return 'active';
+  if (t.status === 'paused') return 'paused';
+  const daysLeft = daysBetween(new Date(), t.trialEnd);
+  if (daysLeft < 0) return 'expired';
+  if (daysLeft <= 3) return 'expiring';
+  return 'trial';
+}
+
+function refreshAll(){
+  loadTenants();
+  const list = Object.values(TENANTS);
+
+  // KPIs
+  const trials   = list.filter(t => tenantStatus(t) === 'trial' || tenantStatus(t) === 'expiring').length;
+  const active   = list.filter(t => t.status === 'active').length;
+  const expired  = list.filter(t => tenantStatus(t) === 'expired').length;
+  const expiring = list.filter(t => tenantStatus(t) === 'expiring').length;
+  const mrr = list.reduce((s,t) => s + (PLAN_PRICES[t.plan] || 0), 0);
+  const weekAgo = new Date(Date.now() - 7*86400000);
+  const newWeek = list.filter(t => new Date(t.createdAt) > weekAgo).length;
+
+  document.getElementById('kpiTotal').textContent  = list.length;
+  document.getElementById('kpiTotalSub').textContent = `${active} active · ${trials} trial`;
+  document.getElementById('kpiTrials').textContent = trials;
+  document.getElementById('kpiTrialsSub').textContent = `${expiring} expiring within 3 days`;
+  document.getElementById('kpiMrr').textContent = fmtRf(mrr);
+  document.getElementById('kpiMrrSub').textContent = `If all ${list.length} customers stay`;
+  document.getElementById('kpiWeek').textContent = newWeek;
+  document.getElementById('kpiWeekSub').textContent = newWeek > 0 ? `↑ ${newWeek} new sign-up${newWeek===1?'':'s'} this week` : 'No sign-ups in last 7 days';
+
+  // Filter counts
+  document.getElementById('ctAll').textContent      = list.length;
+  document.getElementById('ctTrial').textContent    = list.filter(t => tenantStatus(t) === 'trial').length;
+  document.getElementById('ctActive').textContent   = active;
+  document.getElementById('ctExpired').textContent  = expired;
+  document.getElementById('ctExpiring').textContent = expiring;
+
+  renderTable();
+  renderPlanChart();
+  renderActivity();
+}
+
+function renderTable(){
+  const list = Object.values(TENANTS).filter(t => {
+    const status = tenantStatus(t);
+    if (CURRENT_FILTER === 'trial' && status !== 'trial') return false;
+    if (CURRENT_FILTER === 'active' && t.status !== 'active') return false;
+    if (CURRENT_FILTER === 'expired' && status !== 'expired') return false;
+    if (CURRENT_FILTER === 'expiring' && status !== 'expiring') return false;
+    if (SEARCH_Q) {
+      const q = SEARCH_Q.toLowerCase();
+      if (!t.coName.toLowerCase().includes(q) && !t.email.toLowerCase().includes(q) && !t.slug.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  }).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const body = document.getElementById('tenantBody');
+  if (list.length === 0) {
+    body.innerHTML = `<tr><td colspan="7"><div class="empty">
+      <div class="empty-ic">🏢</div>
+      <div class="empty-tt">No customers yet</div>
+      <div class="empty-sb">When someone signs up at the landing page, they'll show up here.</div>
+    </div></td></tr>`;
+    return;
+  }
+
+  body.innerHTML = list.map(t => {
+    const status = tenantStatus(t);
+    const daysLeft = daysBetween(new Date(), t.trialEnd);
+    const initials = t.coName.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    const planClass = 'b-'+t.plan;
+    const statusBdg = {
+      'trial':    `<span class="bdg b-trial"><span class="bd-dot"></span>Trial</span>`,
+      'expiring': `<span class="bdg b-trial"><span class="bd-dot"></span>Expiring</span>`,
+      'expired':  `<span class="bdg b-expired"><span class="bd-dot"></span>Expired</span>`,
+      'active':   `<span class="bdg b-active"><span class="bd-dot"></span>Active</span>`,
+      'paused':   `<span class="bdg b-paused"><span class="bd-dot"></span>Paused</span>`
+    }[status];
+    const daysClass = daysLeft < 0 ? 'danger' : daysLeft <= 3 ? 'warn' : '';
+    const daysText = t.status === 'active' ? '—' : daysLeft < 0 ? `${Math.abs(daysLeft)}d ago` : `${daysLeft}d left`;
+
+    return `<tr class="tenant-row" onclick="openTenant('${t.slug}')">
+      <td>
+        <div class="co-cell">
+          <div class="co-av">${initials}</div>
+          <div>
+            <div class="co-name">${esc(t.coName)}</div>
+            <div class="co-slug">${esc(t.slug)}.yenuerp.mv</div>
+          </div>
+        </div>
+      </td>
+      <td>${esc(t.industry || '—')}</td>
+      <td><span class="bdg ${planClass}">${PLAN_LABELS[t.plan]||t.plan}</span></td>
+      <td>${statusBdg}</td>
+      <td><span class="days-left ${daysClass}">${daysText}</span><br><span style="font-size:10.5px;color:var(--t3)">${fmtDate(t.trialEnd)}</span></td>
+      <td>${fmtDate(t.createdAt)}</td>
+      <td>
+        <div class="row-actions" onclick="event.stopPropagation()">
+          <button class="btn-xs" onclick="impersonate('${t.slug}')">Open →</button>
+          <button class="btn-xs danger" onclick="deleteTenant('${t.slug}')">Delete</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderPlanChart(){
+  const list = Object.values(TENANTS);
+  const counts = { starter: 0, business: 0, enterprise: 0 };
+  list.forEach(t => { counts[t.plan] = (counts[t.plan]||0) + 1; });
+  const total = list.length || 1;
+
+  const bar = document.getElementById('planBar');
+  const legend = document.getElementById('planLegend');
+  bar.innerHTML = '';
+  legend.innerHTML = '';
+  Object.entries(counts).forEach(([k,v]) => {
+    const pct = (v / total * 100);
+    if (pct > 0) {
+      bar.innerHTML += `<div style="width:${pct}%;background:${PLAN_COLORS[k]}">${pct>10?v:''}</div>`;
+    }
+    legend.innerHTML += `<div class="legend-row">
+      <div class="legend-dot" style="background:${PLAN_COLORS[k]}"></div>
+      <div class="name">${PLAN_LABELS[k]}</div>
+      <div class="val">${v} (${pct.toFixed(0)}%)</div>
+    </div>`;
+  });
+  if (list.length === 0) {
+    bar.innerHTML = `<div style="width:100%;background:var(--border);color:var(--t2)"></div>`;
+  }
+}
+
+function renderActivity(){
+  const list = Object.values(TENANTS)
+    .sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 8);
+  const feed = document.getElementById('activityFeed');
+  if (list.length === 0) {
+    feed.innerHTML = `<div class="empty"><div class="empty-tt">No activity yet</div></div>`;
+    return;
+  }
+  feed.innerHTML = list.map(t => {
+    const ago = timeAgo(t.createdAt);
+    return `<div class="act-item">
+      <div class="act-ic signup">🆕</div>
+      <div class="act-body">
+        <div class="act-text"><b>${esc(t.coName)}</b> signed up · ${PLAN_LABELS[t.plan]} plan</div>
+        <div class="act-time">${ago}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function timeAgo(iso){
+  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+
+function setFilter(f, btn){
+  CURRENT_FILTER = f;
+  document.querySelectorAll('.fp').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderTable();
+}
+
+function searchTenants(q){ SEARCH_Q = q; renderTable(); }
+
+function openTenant(slug){
+  const t = TENANTS[slug]; if (!t) return;
+  const status = tenantStatus(t);
+  const daysLeft = daysBetween(new Date(), t.trialEnd);
+  document.getElementById('modalTitle').textContent = t.coName;
+  document.getElementById('modalSub').textContent = t.slug + '.yenuerp.mv · ' + (t.email);
+  document.getElementById('modalBody').innerHTML = `
+    <div class="m-row"><div class="lb">Workspace URL</div><div class="vl">${t.slug}.yenuerp.mv</div></div>
+    <div class="m-row"><div class="lb">Owner</div><div class="vl">${esc(t.owner?.firstName||'')} ${esc(t.owner?.lastName||'')}</div></div>
+    <div class="m-row"><div class="lb">Email</div><div class="vl">${esc(t.email)}</div></div>
+    <div class="m-row"><div class="lb">Phone</div><div class="vl">${esc(t.owner?.phone || '—')}</div></div>
+    <div class="m-row"><div class="lb">Industry</div><div class="vl">${esc(t.industry || '—')}</div></div>
+    <div class="m-row"><div class="lb">Size</div><div class="vl">${esc(t.size || '—')}</div></div>
+    <div class="m-row"><div class="lb">Country</div><div class="vl">${esc(t.country || '—')}</div></div>
+    <div class="m-row"><div class="lb">Base currency</div><div class="vl">${esc(t.currency || 'MVR')}</div></div>
+    <div class="m-row"><div class="lb">Plan</div><div class="vl">${PLAN_LABELS[t.plan]} · ${fmtRf(PLAN_PRICES[t.plan])}/month</div></div>
+    <div class="m-row"><div class="lb">Status</div><div class="vl">${status.toUpperCase()} · ${daysLeft >= 0 ? daysLeft+' days remaining' : Math.abs(daysLeft)+' days expired'}</div></div>
+    <div class="m-row"><div class="lb">Trial started</div><div class="vl">${fmtDate(t.trialStart)}</div></div>
+    <div class="m-row"><div class="lb">Trial ends</div><div class="vl">${fmtDate(t.trialEnd)}</div></div>
+    <div class="m-row"><div class="lb">Signed up</div><div class="vl">${fmtDate(t.createdAt)} (${timeAgo(t.createdAt)})</div></div>
+  `;
+  document.getElementById('modalImpersonate').onclick = ()=> impersonate(slug);
+  document.getElementById('modalBg').classList.add('on');
+}
+
+function closeModal(){ document.getElementById('modalBg').classList.remove('on'); }
+
+function impersonate(slug){
+  const t = TENANTS[slug]; if (!t) return;
+  if (!confirm(`Open ${t.coName}'s workspace as them?\n\nYou will be logged in as ${t.owner.firstName} ${t.owner.lastName}.`)) return;
+  localStorage.setItem(ACTIVE_KEY, slug);
+  localStorage.setItem('psms_session', JSON.stringify({
+    email: t.email,
+    name: t.owner.firstName + ' ' + t.owner.lastName,
+    short: (t.owner.firstName[0] + t.owner.lastName[0]).toUpperCase(),
+    role: 'owner',
+    label: 'Owner / Admin (admin impersonation)',
+    color: '#92400e',
+    access: ['accounts','pos','payflow','hr'],
+    tenant: slug,
+    coName: t.coName,
+    plan: t.plan,
+    trialEnd: t.trialEnd,
+    impersonated: true,
+    demo: true
+  }));
+  location.href = '/app';
+}
+
+function impersonateMenu(){
+  const list = Object.values(TENANTS);
+  if (list.length === 0) { alert('No customers yet.'); return; }
+  const name = prompt('Enter the workspace slug to open (e.g. sunrise-trading):');
+  if (name && TENANTS[name]) impersonate(name);
+  else if (name) alert('No tenant with that slug.');
+}
+
+function deleteTenant(slug){
+  const t = TENANTS[slug]; if (!t) return;
+  if (!confirm(`Permanently delete ${t.coName}?\n\nThis cannot be undone.`)) return;
+  delete TENANTS[slug];
+  localStorage.setItem(TENANTS_KEY, JSON.stringify(TENANTS));
+  refreshAll();
+}
+
+function clearAllData(){
+  if (!confirm('Delete ALL customer data?\n\nThis is for demo purposes — use with care.')) return;
+  if (!confirm('Are you sure? This deletes every customer.')) return;
+  localStorage.removeItem(TENANTS_KEY);
+  refreshAll();
+}
+
+function exportCsv(){
+  const list = Object.values(TENANTS);
+  if (list.length === 0) { alert('No customers to export'); return; }
+  const rows = [
+    ['Company','Slug','Email','Owner','Phone','Industry','Size','Country','Currency','Plan','Status','Days Left','Created','Trial Ends']
+  ];
+  list.forEach(t => {
+    const status = tenantStatus(t);
+    const daysLeft = daysBetween(new Date(), t.trialEnd);
+    rows.push([
+      t.coName, t.slug, t.email,
+      `${t.owner?.firstName||''} ${t.owner?.lastName||''}`,
+      t.owner?.phone||'',
+      t.industry||'', t.size||'', t.country||'', t.currency||'MVR',
+      t.plan||'', status, daysLeft,
+      t.createdAt||'', t.trialEnd||''
+    ]);
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `yenuerp-customers-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+function esc(s){ return String(s||'').replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+// Boot
+refreshAll();
+setInterval(refreshAll, 5000); // auto-refresh every 5s
+</script>
+
+</body>
+</html>

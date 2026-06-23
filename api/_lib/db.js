@@ -1,42 +1,20 @@
 // api/_lib/db.js
-// Neon (PostgreSQL) client wrapper for Vercel serverless functions.
-//
-// Looks for the connection string under several common names so it works with
-// BOTH (a) Vercel's automatic Neon Storage integration and (b) a manually-set
-// DATABASE_URL. Vercel's integration creates POSTGRES_URL, POSTGRES_PRISMA_URL,
-// etc.; manual setup typically uses DATABASE_URL.
+// Thin Neon (PostgreSQL) client wrapper using @neondatabase/serverless.
+// Designed for Vercel serverless functions — no connection pooling needed.
 
 import { neon } from '@neondatabase/serverless';
 
-const url =
-  process.env.DATABASE_URL          ||  // manually added (our deployment guide)
-  process.env.POSTGRES_URL          ||  // Vercel-Neon integration default
-  process.env.POSTGRES_PRISMA_URL   ||  // Prisma-style (pooled)
-  process.env.POSTGRES_URL_NON_POOLING || // Vercel non-pooled
-  process.env.NEON_DATABASE_URL     ||
-  null;
+const url = process.env.DATABASE_URL;
 
 if (!url) {
-  console.warn(
-    '[db] No database URL found. Looked for: DATABASE_URL, POSTGRES_URL, ' +
-    'POSTGRES_PRISMA_URL, POSTGRES_URL_NON_POOLING, NEON_DATABASE_URL.'
-  );
-} else {
-  // Log which one we found (without the password)
-  const which =
-    process.env.DATABASE_URL          ? 'DATABASE_URL' :
-    process.env.POSTGRES_URL          ? 'POSTGRES_URL' :
-    process.env.POSTGRES_PRISMA_URL   ? 'POSTGRES_PRISMA_URL' :
-    process.env.POSTGRES_URL_NON_POOLING ? 'POSTGRES_URL_NON_POOLING' :
-    'NEON_DATABASE_URL';
-  console.log('[db] using ' + which + ' (host:', url.replace(/^.*@/, '').split('/')[0] + ')');
+  console.warn('[db] DATABASE_URL not set — API will return 503');
 }
 
 export const sql = url ? neon(url) : null;
 export const dbReady = !!sql;
 
-/** Run a parameterised query. */
+/** Convenience: run a parameterised query and return rows. */
 export async function query(strings, ...values) {
-  if (!sql) throw new Error('No database URL configured in environment');
+  if (!sql) throw new Error('DATABASE_URL not configured');
   return sql(strings, ...values);
 }
