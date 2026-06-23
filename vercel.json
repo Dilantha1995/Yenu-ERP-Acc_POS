@@ -14,16 +14,16 @@
         { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
         { "key": "X-Content-Type-Options", "value": "nosniff" }
       ]
-    },
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store" }
-      ]
     }
   ],
   "rewrites": [
+    { "source": "/app",      "destination": "/app.html" },
+    { "source": "/login",    "destination": "/login.html" },
+    { "source": "/signup",   "destination": "/signup.html" },
+    { "source": "/admin",    "destination": "/admin.html" },
+    { "source": "/setup",    "destination": "/setup.html" },
     { "source": "/accounts", "destination": "/accounts.html" },
-    { "source": "/pos",      "destination": "/pos.html" }
+    { "source": "/pos",      "destination": "/pos.html" },
+    { "source": "/diag",     "destination": "/diag.html" }
   ]
 }

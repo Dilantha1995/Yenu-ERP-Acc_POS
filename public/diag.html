@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PSMS ERP · Diagnostics</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f4f6f9;color:#1c2030;padding:30px 20px;line-height:1.55}
+.wrap{max-width:780px;margin:0 auto}
+h1{font-size:24px;color:#0d2d6e;margin-bottom:6px;font-weight:800}
+.sub{color:#5c6478;margin-bottom:24px;font-size:13px}
+.test{background:#fff;border:1px solid #dde1e8;border-radius:10px;padding:16px 18px;margin-bottom:12px;display:flex;align-items:flex-start;gap:14px}
+.test .ic{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;flex-shrink:0}
+.test.pass .ic{background:#166534}
+.test.fail .ic{background:#991b1b}
+.test.warn .ic{background:#d97706}
+.test.run .ic{background:#9ba3b5}
+.test .body{flex:1;min-width:0}
+.test h3{font-size:14px;font-weight:700;margin-bottom:2px}
+.test p{font-size:12.5px;color:#5c6478;margin-bottom:6px}
+.test pre{background:#0d1117;color:#e6edf3;padding:10px 12px;border-radius:6px;font-family:'Consolas',monospace;font-size:11px;overflow-x:auto;white-space:pre-wrap;word-break:break-all}
+.fix{background:#eef2fc;border-left:3px solid #1849a9;padding:10px 14px;border-radius:6px;font-size:12px;margin-top:8px;color:#0d2d6e}
+.fix b{display:block;margin-bottom:4px}
+.back{display:inline-block;margin-bottom:18px;color:#1849a9;font-weight:600;text-decoration:none;font-size:12.5px}
+.back:hover{text-decoration:underline}
+.copy{background:#1849a9;color:#fff;border:none;padding:5px 11px;border-radius:6px;font-size:11px;cursor:pointer;margin-top:6px;font-family:inherit;font-weight:600}
+.copy:hover{background:#0d2d6e}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="/" class="back">← Back to sign-in</a>
+  <h1>System Diagnostics</h1>
+  <p class="sub">This page checks each part of your ERP deployment and shows exactly what's working.</p>
+  <div id="tests"></div>
+  <div id="summary"></div>
+</div>
+
+<script>
+const tests = [
+  { id:'static',  label:'Static files served',         fn: testStatic  },
+  { id:'health',  label:'/api/health endpoint responds', fn: testHealth },
+  { id:'db',      label:'Database connection (Neon)',   fn: testDb      },
+  { id:'login',   label:'Login endpoint accepts requests', fn: testLogin },
+  { id:'users',   label:'Demo users exist in database',  fn: testUsers  }
+];
+
+const out = document.getElementById('tests');
+
+function card(id, label, state, body, fix) {
+  const ic = { pass:'✓', fail:'✕', warn:'!', run:'…' }[state] || '?';
+  return `<div class="test ${state}" id="t-${id}">
+    <div class="ic">${ic}</div>
+    <div class="body">
+      <h3>${label}</h3>
+      ${body ? `<p>${body.msg||''}</p>` : ''}
+      ${body && body.detail ? `<pre>${esc(body.detail)}</pre>` : ''}
+      ${fix ? `<div class="fix"><b>How to fix:</b>${fix}</div>` : ''}
+    </div>
+  </div>`;
+}
+function esc(s){return String(s||'').replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
+
+async function fetchTO(url, opts={}, ms=8000){
+  const c = new AbortController();
+  const t = setTimeout(()=>c.abort(),ms);
+  try { const r = await fetch(url,{...opts,signal:c.signal}); clearTimeout(t); return r; }
+  catch(e){ clearTimeout(t); throw e; }
+}
+
+async function testStatic(){
+  return { pass:true, msg:'You are seeing this page, so static hosting (Vercel) is working.' };
+}
+
+async function testHealth(){
+  try {
+    const r = await fetchTO('/api/health', {}, 8000);
+    const body = await r.json().catch(()=>({}));
+    if (r.ok) return { pass:true, msg:`Endpoint responded with HTTP ${r.status}`, detail: JSON.stringify(body, null, 2) };
+    if (r.status === 503) return {
+      pass:false, msg:`Endpoint says it's not configured (HTTP 503)`,
+      detail: JSON.stringify(body, null, 2),
+      fix: `The <b>DATABASE_URL</b> environment variable is missing or empty in Vercel.<br>
+            Go to: Vercel dashboard → your project → <b>Settings</b> → <b>Environment Variables</b> → add <code>DATABASE_URL</code> with your Neon connection string.<br>
+            Then click <b>Deployments</b> tab → top deployment → <b>...</b> → <b>Redeploy</b>.`
+    };
+    return { pass:false, msg:`Endpoint returned HTTP ${r.status}`, detail: JSON.stringify(body, null, 2) };
+  } catch (e) {
+    return {
+      pass:false, msg:`Could not reach /api/health: ${e.message}`,
+      fix: `The serverless functions aren't deployed correctly. The most common cause is the <b>api/</b> folder wasn't uploaded to GitHub.<br>
+            Check your GitHub repo — you should see folders <code>api</code>, <code>db</code>, <code>public</code>, <code>scripts</code>.<br>
+            If <code>api/</code> is missing, upload it via GitHub web interface, then redeploy.`
+    };
+  }
+}
+
+async function testDb(){
+  try {
+    const r = await fetchTO('/api/health', {}, 8000);
+    const body = await r.json();
+    if (body.db === true) return { pass:true, msg:'Database is reachable and responding to queries.' };
+    if (body.db === false && body.error) return {
+      pass:false, msg:'Database connection failed.', detail: body.error,
+      fix: `Your DATABASE_URL is set, but Neon is rejecting it. Common causes:<br>
+            1. Connection string was truncated when you pasted it (it must end with <code>?sslmode=require</code>)<br>
+            2. Wrong password (Neon shows it only once — get a new one from Neon → Settings → Reset password)<br>
+            3. You picked the <b>Direct</b> connection — use the <b>Pooled</b> one instead (ends with <code>-pooler</code>)`
+    };
+    return { pass:false, msg:'Unknown database state', detail: JSON.stringify(body, null, 2) };
+  } catch (e) {
+    return { pass:false, msg:'Cannot test — /api/health is not responding.' };
+  }
+}
+
+async function testLogin(){
+  try {
+    const r = await fetchTO('/api/auth/login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email:'cfo@psms.mv', password:'wrong-pwd-on-purpose'})
+    }, 8000);
+    if (r.status === 401) {
+      return { pass:true, msg:'Login endpoint works (returned 401 for wrong password — that\'s correct behavior).' };
+    }
+    if (r.status === 503) {
+      return { pass:false, msg:'Login endpoint says the backend is not configured.',
+        fix:'Same fix as the /api/health test above — set DATABASE_URL in Vercel.' };
+    }
+    if (r.ok) {
+      return { pass:false, msg:'WARNING: Login accepted a wrong password — this is a serious bug. Contact your developer.' };
+    }
+    const body = await r.json().catch(()=>({}));
+    return { pass:false, msg:`Login endpoint returned HTTP ${r.status}`, detail: JSON.stringify(body, null, 2) };
+  } catch (e) {
+    return { pass:false, msg:`Could not reach /api/auth/login: ${e.message}` };
+  }
+}
+
+async function testUsers(){
+  // Try a real login with the right credentials
+  try {
+    const r = await fetchTO('/api/auth/login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email:'cfo@psms.mv', password:'CFO@2026'})
+    }, 8000);
+    if (r.ok) {
+      // Clean up the session cookie we just set
+      try { await fetch('/api/auth/logout', { method:'POST', credentials:'include' }); } catch(_){}
+      return { pass:true, msg:'Demo user "cfo@psms.mv" exists and can log in. Database is fully set up. 🎉' };
+    }
+    if (r.status === 401) {
+      return { pass:false, msg:'Demo user does not exist in the database (or password is wrong).',
+        fix: `You haven't run <b>Step 9 (Set up the database tables)</b> of the deployment guide yet.<br><br>
+              <b>Quick fix:</b><br>
+              1. Go to <a href="https://console.neon.tech" target="_blank">console.neon.tech</a><br>
+              2. Click your project → SQL Editor<br>
+              3. Copy the entire contents of <code>db/schema.sql</code> from your GitHub repo<br>
+              4. Paste into the SQL editor and click <b>Run</b><br>
+              5. Wait for "Success" then refresh this page<br><br>
+              <button class="copy" onclick="window.open('https://console.neon.tech','_blank')">Open Neon Console</button>`
+      };
+    }
+    if (r.status === 503) {
+      return { pass:false, msg:'Cannot check — backend not configured.' };
+    }
+    return { pass:false, msg:`HTTP ${r.status} — unexpected response.` };
+  } catch (e) {
+    return { pass:false, msg:`Could not reach the API: ${e.message}` };
+  }
+}
+
+(async function run(){
+  for (const t of tests) {
+    out.insertAdjacentHTML('beforeend', card(t.id, t.label, 'run'));
+  }
+  for (const t of tests) {
+    const result = await t.fn().catch(e => ({ pass:false, msg:'Test crashed: '+e.message }));
+    const state = result.pass ? 'pass' : (result.warn ? 'warn' : 'fail');
+    document.getElementById('t-'+t.id).outerHTML = card(t.id, t.label, state, result, result.fix);
+  }
+  // Summary
+  const allPass = Array.from(document.querySelectorAll('.test')).every(t => t.classList.contains('pass'));
+  document.getElementById('summary').innerHTML = allPass
+    ? `<div class="test pass" style="margin-top:24px"><div class="ic">✓</div><div class="body"><h3>Everything is working — your ERP is fully live.</h3><p>Go back to the sign-in page and log in with any demo account.</p></div></div>`
+    : `<div class="test warn" style="margin-top:24px"><div class="ic">!</div><div class="body"><h3>Some checks failed.</h3><p>Fix the items marked with ✕ above (instructions are included with each one), then refresh this page.</p><p style="margin-top:8px">Meanwhile, you can still use the ERP in <b>demo mode</b> — go back to the sign-in page and click any demo account.</p></div></div>`;
+})();
+</script>
+</body>
+</html>

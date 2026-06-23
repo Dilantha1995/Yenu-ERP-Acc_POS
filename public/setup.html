@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Company Setup · YenuERP</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f6f9;--surface:#fff;--s2:#f0f2f6;--s3:#e8ebf0;
+  --border:#dde1e8;--border2:#c8cdd8;
+  --text:#1c2030;--t2:#5c6478;--t3:#9ba3b5;
+  --blue:#1849a9;--blue2:#eef2fc;--blue3:#0d2d6e;
+  --green:#166534;--green2:#f0fdf4;--green3:#dcfce7;
+  --amber:#92400e;--amber2:#fffbeb;
+  --red:#991b1b;--red2:#fef2f2;--red3:#fee2e2;
+  --teal:#115e59;--teal2:#f0fdfa;
+  --purple:#6b21a8;--purple2:#faf5ff;
+  --orange:#c2410c;--orange2:#fff7ed;
+  --r:8px;--r2:12px;
+}
+html,body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5}
+
+/* Top bar */
+.topbar{background:var(--blue3);height:54px;padding:0 22px;color:#fff;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:60;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:#fff;font-size:14px;text-decoration:none}
+.brand-mark{width:32px;height:32px;background:#fff;color:var(--blue3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px}
+.brand-sub{font-size:10.5px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);padding:3px 9px;border-radius:14px;font-weight:600}
+.co-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);padding:5px 12px;border-radius:20px;font-size:11.5px;font-weight:600;color:#fff}
+.spacer{flex:1}
+.user-pill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px 4px 4px;font-size:12px;font-weight:600}
+.user-av{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800}
+.tb-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:7px;padding:5px 11px;color:#fff;font-size:11px;cursor:pointer;font-weight:600;font-family:inherit;text-decoration:none}
+.tb-btn:hover{background:rgba(255,255,255,.18)}
+
+/* Layout */
+.app-body{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 54px)}
+.sidebar{background:#fff;border-right:1px solid var(--border);padding:14px 0;overflow-y:auto;max-height:calc(100vh - 54px)}
+.nav-sec{font-size:9.5px;font-weight:800;color:var(--t3);padding:14px 16px 5px;text-transform:uppercase;letter-spacing:.09em}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:12.5px;color:var(--t2);cursor:pointer;border-left:3px solid transparent;font-weight:500;user-select:none}
+.ni:hover{background:var(--s2);color:var(--text)}
+.ni.active{background:var(--blue2);color:var(--blue);border-left-color:var(--blue);font-weight:700}
+.ni .ic{font-size:15px;width:18px;text-align:center;flex-shrink:0}
+.ni .badge{margin-left:auto;background:var(--green);color:#fff;border-radius:10px;font-size:9px;font-weight:800;padding:2px 7px;letter-spacing:.03em}
+.ni .badge.warn{background:var(--amber)}
+.ni .badge.todo{background:var(--red)}
+
+.main{padding:24px 28px;max-height:calc(100vh - 54px);overflow-y:auto;background:var(--bg)}
+
+/* Page header */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;gap:14px;flex-wrap:wrap}
+.pt{font-size:21px;font-weight:800;color:var(--text);letter-spacing:-.01em}
+.ps{font-size:12.5px;color:var(--t2);margin-top:4px}
+.brow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-size:12px;cursor:pointer;font-weight:600;font-family:inherit;transition:all .12s;text-decoration:none;line-height:1.4}
+.btn:hover{background:var(--s2)}
+.btn-p{background:linear-gradient(135deg,#1849a9,#0d2d6e);color:#fff;border-color:var(--blue)}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(13,45,110,.2);background:linear-gradient(135deg,#1849a9,#0d2d6e)}
+.btn-g{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-r{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-sm{padding:5px 11px;font-size:11px}
+.btn-xs{padding:4px 9px;font-size:10.5px;border-radius:6px;font-weight:700}
+.btn-icon{padding:6px 9px}
+
+/* Cards */
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.ch{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ct{font-size:14px;font-weight:800;color:var(--text)}
+.cs{font-size:11.5px;color:var(--t2);margin-top:2px}
+.cb{padding:18px}
+
+/* Progress / Stats */
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.sc{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--blue))}
+.sc.blue{--accent:#1849a9}
+.sc.green{--accent:#166534}
+.sc.amber{--accent:#d97706}
+.sc.purple{--accent:#6b21a8}
+.sl{font-size:10.5px;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-bottom:6px}
+.sv{font-size:24px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;line-height:1.1}
+.ss{font-size:10.5px;color:var(--t3);margin-top:5px}
+@media (max-width:1100px){.sgrid{grid-template-columns:1fr 1fr}}
+
+/* Form */
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:11.5px;font-weight:700;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.03em}
+.fl .req{color:var(--red);margin-left:2px}
+.fi,.fs,.fta{width:100%;padding:9px 12px;font-size:13px;border:1.5px solid var(--border);border-radius:8px;outline:none;font-family:inherit;background:#fff}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,73,169,.08)}
+.fta{resize:vertical;min-height:60px}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.fg4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.fhelp{font-size:10.5px;color:var(--t3);margin-top:4px}
+@media(max-width:700px){.fg2,.fg3,.fg4{grid-template-columns:1fr}}
+
+/* Tables */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:10px;font-weight:800;color:var(--t3);padding:9px 13px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;background:var(--s2)}
+td{padding:10px 13px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.mono{font-family:'Consolas',monospace;font-size:11.5px;font-weight:700;color:var(--blue);letter-spacing:.02em}
+.num{text-align:right;font-variant-numeric:tabular-nums;font-family:'Consolas',monospace}
+.row-actions{display:flex;gap:5px;justify-content:flex-end}
+
+/* Badge */
+.bdg{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap;letter-spacing:.02em}
+.b-asset{background:var(--blue2);color:var(--blue)}
+.b-lia{background:var(--amber2);color:var(--amber)}
+.b-eq{background:var(--purple2);color:var(--purple)}
+.b-rev{background:var(--green2);color:var(--green)}
+.b-exp{background:var(--red2);color:var(--red)}
+
+/* Setup progress */
+.progress-card{background:linear-gradient(135deg,#fff,#fafbff);border:1px solid var(--border);border-radius:14px;padding:22px 26px;margin-bottom:20px}
+.pg-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:14px}
+.pg-head .pg-icon{width:48px;height:48px;border-radius:12px;background:var(--blue2);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.pg-head h2{font-size:18px;font-weight:800;margin-bottom:3px}
+.pg-head p{font-size:12.5px;color:var(--t2)}
+.pb-wrap{height:8px;background:var(--s3);border-radius:4px;overflow:hidden;margin-bottom:8px}
+.pb-fill{height:100%;background:linear-gradient(90deg,#1849a9,#6b21a8);transition:width .4s ease;border-radius:4px}
+.pg-meta{display:flex;justify-content:space-between;font-size:11.5px;font-weight:600}
+.pg-meta .pg-pct{color:var(--blue);font-weight:800}
+.pg-meta .pg-step{color:var(--t2)}
+
+/* Checklist on dashboard */
+.checklist{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.cl-item{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:16px;position:relative;text-decoration:none;color:inherit;display:block;transition:all .15s}
+.cl-item:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 10px 20px rgba(13,45,110,.08)}
+.cl-item.done{background:#fafffe;border-color:#bbf7d0}
+.cl-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.cl-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.cl-item.done .cl-check{background:var(--green);border-color:var(--green);color:#fff}
+.cl-item h4{font-size:13.5px;font-weight:800;color:var(--text)}
+.cl-item p{font-size:11.5px;color:var(--t2);line-height:1.5;margin-bottom:10px;min-height:32px}
+.cl-status{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;color:var(--blue);padding-top:10px;border-top:1px dashed var(--border)}
+.cl-item.done .cl-status{color:var(--green)}
+
+/* Industry template picker */
+.tmpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.tmpl{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .15s;text-align:center}
+.tmpl:hover{border-color:var(--blue);background:var(--blue2);transform:translateY(-2px)}
+.tmpl.selected{border-color:var(--blue);background:var(--blue2);box-shadow:0 4px 12px rgba(24,73,169,.15)}
+.tmpl .t-ic{font-size:30px;margin-bottom:8px}
+.tmpl h5{font-size:12.5px;font-weight:800;margin-bottom:3px}
+.tmpl p{font-size:10.5px;color:var(--t2);line-height:1.4}
+
+/* Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(13,45,110,.55);z-index:200;align-items:flex-start;justify-content:center;padding:50px 20px;overflow-y:auto}
+.modal-bg.on{display:flex}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:640px;box-shadow:0 30px 80px rgba(0,0,0,.3);overflow:hidden}
+.modal.wide{max-width:880px}
+.m-head{padding:16px 22px;border-bottom:1px solid var(--border);background:var(--s2);display:flex;align-items:center;justify-content:space-between}
+.m-tt{font-size:15px;font-weight:800}
+.m-sb{font-size:11.5px;color:var(--t2);margin-top:2px}
+.m-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--t2);padding:0 4px}
+.m-close:hover{color:var(--text)}
+.m-body{padding:22px;max-height:70vh;overflow-y:auto}
+.m-foot{padding:14px 22px;border-top:1px solid var(--border);background:var(--s2);display:flex;justify-content:flex-end;gap:8px}
+
+/* Empty */
+.empty{padding:50px 20px;text-align:center;color:var(--t2)}
+.empty-ic{font-size:42px;opacity:.4;margin-bottom:12px}
+.empty-tt{font-size:14px;font-weight:800;color:var(--text);margin-bottom:5px}
+.empty-sb{font-size:12px;color:var(--t3);margin-bottom:14px}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(40px);background:var(--green);color:#fff;padding:10px 18px;border-radius:10px;font-size:12.5px;font-weight:600;opacity:0;transition:all .3s;z-index:300;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--red)}
+
+@media (max-width:900px){
+  .app-body{grid-template-columns:1fr}
+  .sidebar{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/app" class="brand">
+    <div class="brand-mark">Y</div>
+    <span>YenuERP</span>
+    <span class="brand-sub">Setup</span>
+  </a>
+  <div class="co-pill" id="coPill">—</div>
+  <div class="spacer"></div>
+  <a href="/app" class="tb-btn">← Modules</a>
+  <div class="user-pill">
+    <div class="user-av" id="userAv">—</div>
+    <span id="userName">—</span>
+  </div>
+</div>
+
+<div class="app-body">
+  <div class="sidebar" id="sidebar"></div>
+  <div class="main" id="main"></div>
+</div>
+
+<!-- Modals mount -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div id="modalMount"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   COMPANY SETUP — Tenant-isolated configuration module
+   ═══════════════════════════════════════════════════════════════════ */
+
+const ME_KEY = 'psms_session';
+const TENANTS_KEY = 'yenuerp_tenants';
+
+/* ── Session ── */
+let session = null;
+try { session = JSON.parse(localStorage.getItem(ME_KEY) || 'null'); } catch(e){}
+if (!session) { location.replace('/'); }
+
+const TENANT = session?.tenant || 'default';
+const T_PREFIX = 'tenant:' + TENANT + ':setup:';
+
+/* ── Tenant-scoped storage ── */
+const tstore = {
+  get(key, fallback = null) {
+    try {
+      const v = localStorage.getItem(T_PREFIX + key);
+      return v ? JSON.parse(v) : fallback;
+    } catch(e) { return fallback; }
+  },
+  set(key, value) {
+    try { localStorage.setItem(T_PREFIX + key, JSON.stringify(value)); } catch(e){}
+  }
+};
+
+/* ── Toast ── */
+function toast(msg, isErr) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  t.classList.toggle('err', !!isErr);
+  setTimeout(() => t.classList.remove('on'), 2400);
+}
+
+/* ── Modal helpers ── */
+function showModal(html, wide) {
+  document.getElementById('modalMount').innerHTML = `<div class="modal ${wide?'wide':''}">${html}</div>`;
+  document.getElementById('modalBg').classList.add('on');
+}
+function closeModal() { document.getElementById('modalBg').classList.remove('on'); }
+
+function esc(s){ return String(s||'').replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function uid(){ return Math.random().toString(36).slice(2, 10); }
+function fmt(n){ return (n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+/* ── Navigation ── */
+const NAV = [
+  { sec: 'Overview', items: [
+    { key: 'dashboard', label: 'Setup Dashboard', ic: '📊' }
+  ]},
+  { sec: 'Company Profile', items: [
+    { key: 'company',   label: 'Company Info',     ic: '🏢' },
+    { key: 'branding',  label: 'Branding & Logo',  ic: '🎨' },
+    { key: 'tax',       label: 'Tax Settings',     ic: '🧾' }
+  ]},
+  { sec: 'Master Data', items: [
+    { key: 'coa',       label: 'Chart of Accounts',ic: '📒' },
+    { key: 'items',     label: 'Products / Items', ic: '📦' },
+    { key: 'customers', label: 'Customers',        ic: '👥' },
+    { key: 'vendors',   label: 'Vendors',          ic: '🚚' }
+  ]},
+  { sec: 'Team & Data', items: [
+    { key: 'users',     label: 'Users & Roles',    ic: '👤' },
+    { key: 'data',      label: 'Import / Export',  ic: '📥' }
+  ]}
+];
+
+let CUR_VIEW = 'dashboard';
+
+function renderSidebar() {
+  const html = NAV.map(s => `
+    <div class="nav-sec">${s.sec}</div>
+    ${s.items.map(it => {
+      const status = setupStatus(it.key);
+      const badge = status === 'done' ? '<span class="badge">✓</span>'
+                  : status === 'partial' ? '<span class="badge warn">!</span>'
+                  : status === 'todo' ? '<span class="badge todo">•</span>' : '';
+      return `<div class="ni ${CUR_VIEW===it.key?'active':''}" onclick="goto('${it.key}')">
+        <span class="ic">${it.ic}</span>${it.label}${badge}
+      </div>`;
+    }).join('')}
+  `).join('');
+  document.getElementById('sidebar').innerHTML = html;
+}
+
+function setupStatus(key) {
+  // Returns 'done' | 'partial' | 'todo' | ''
+  switch(key) {
+    case 'company': return tstore.get('company')?.name ? 'done' : 'todo';
+    case 'coa':     return (tstore.get('coa')||[]).length > 0 ? 'done' : 'todo';
+    case 'items':   return (tstore.get('items')||[]).length > 0 ? 'done' : '';
+    case 'customers': return (tstore.get('customers')||[]).length > 0 ? 'done' : '';
+    case 'vendors': return (tstore.get('vendors')||[]).length > 0 ? 'done' : '';
+    case 'tax':     return tstore.get('tax')?.gstEnabled !== undefined ? 'done' : 'todo';
+    case 'branding': return tstore.get('branding')?.primaryColor ? 'done' : '';
+    case 'users':   return (tstore.get('users')||[]).length > 0 ? 'done' : '';
+    default: return '';
+  }
+}
+
+function goto(view) {
+  CUR_VIEW = view;
+  renderSidebar();
+  const fn = 'view_' + view;
+  if (window[fn]) window[fn]();
+  else document.getElementById('main').innerHTML = '<div class="empty"><div class="empty-tt">Coming soon</div></div>';
+  document.getElementById('main').scrollTop = 0;
+}
+
+/* ─────────────────────────────────────────────
+   INDUSTRY-BASED CHART OF ACCOUNTS TEMPLATES
+   ───────────────────────────────────────────── */
+const COA_TEMPLATES = {
+  retail: {
+    label: '🏪 Retail / Shop',
+    desc: 'Cash retail, shops, kiosks',
+    accounts: [
+      { code:'1000', name:'Cash on Hand',                   type:'ast', class:'ca', normal:'dr' },
+      { code:'1010', name:'Petty Cash',                     type:'ast', class:'ca', normal:'dr' },
+      { code:'1100', name:'Bank Account',                   type:'ast', class:'ca', normal:'dr' },
+      { code:'1200', name:'Accounts Receivable',            type:'ast', class:'ca', normal:'dr' },
+      { code:'1300', name:'Inventory — Merchandise',        type:'ast', class:'ca', normal:'dr' },
+      { code:'1500', name:'Shop Fittings & Furniture',      type:'ast', class:'fa', normal:'dr' },
+      { code:'1510', name:'POS Equipment',                  type:'ast', class:'fa', normal:'dr' },
+      { code:'1600', name:'Accumulated Depreciation',       type:'ast', class:'fa', normal:'cr' },
+      { code:'2000', name:'Accounts Payable',               type:'lia', class:'cl', normal:'cr' },
+      { code:'2200', name:'GST Payable',                    type:'lia', class:'cl', normal:'cr' },
+      { code:'2110', name:'Wages Payable',                  type:'lia', class:'cl', normal:'cr' },
+      { code:'3000', name:"Owner's Capital",                type:'eq',  class:'eq', normal:'cr' },
+      { code:'3200', name:'Retained Earnings',              type:'eq',  class:'eq', normal:'cr' },
+      { code:'4000', name:'Sales Revenue',                  type:'rev', class:'rev',normal:'cr' },
+      { code:'4090', name:'Sales Returns',                  type:'rev', class:'rev',normal:'dr' },
+      { code:'5000', name:'Cost of Goods Sold',             type:'exp', class:'cogs',normal:'dr'},
+      { code:'5200', name:'Inventory Adjustments',          type:'exp', class:'cogs',normal:'dr'},
+      { code:'6000', name:'Salaries & Wages',               type:'exp', class:'opex',normal:'dr'},
+      { code:'6100', name:'Rent Expense',                   type:'exp', class:'opex',normal:'dr'},
+      { code:'6200', name:'Utilities',                      type:'exp', class:'opex',normal:'dr'},
+      { code:'6300', name:'Marketing',                      type:'exp', class:'opex',normal:'dr'},
+      { code:'6400', name:'Bank Charges',                   type:'exp', class:'opex',normal:'dr'},
+      { code:'6500', name:'Depreciation Expense',           type:'exp', class:'opex',normal:'dr'},
+      { code:'6990', name:'Other Expenses',                 type:'exp', class:'opex',normal:'dr'}
+    ]
+  },
+  trading: {
+    label: '📦 Trading / Distribution',
+    desc: 'Wholesale, import/export',
+    accounts: [
+      { code:'1000', name:'Cash on Hand',                type:'ast',class:'ca',normal:'dr'},
+      { code:'1100', name:'Bank — MVR',                  type:'ast',class:'ca',normal:'dr'},
+      { code:'1101', name:'Bank — USD',                  type:'ast',class:'ca',normal:'dr'},
+      { code:'1200', name:'Accounts Receivable — Trade', type:'ast',class:'ca',normal:'dr'},
+      { code:'1205', name:'Allowance for Doubtful Debts',type:'ast',class:'ca',normal:'cr'},
+      { code:'1300', name:'Inventory — Goods',           type:'ast',class:'ca',normal:'dr'},
+      { code:'1305', name:'Goods in Transit',            type:'ast',class:'ca',normal:'dr'},
+      { code:'1400', name:'Prepaid Expenses',            type:'ast',class:'ca',normal:'dr'},
+      { code:'1410', name:'Input GST Receivable',        type:'ast',class:'ca',normal:'dr'},
+      { code:'1500', name:'Office Equipment',            type:'ast',class:'fa',normal:'dr'},
+      { code:'1510', name:'Motor Vehicles',              type:'ast',class:'fa',normal:'dr'},
+      { code:'1600', name:'Accumulated Depreciation',    type:'ast',class:'fa',normal:'cr'},
+      { code:'2000', name:'Accounts Payable — Trade',    type:'lia',class:'cl',normal:'cr'},
+      { code:'2100', name:'Accrued Expenses',            type:'lia',class:'cl',normal:'cr'},
+      { code:'2200', name:'GST Payable',                 type:'lia',class:'cl',normal:'cr'},
+      { code:'2201', name:'BPT/Income Tax Payable',      type:'lia',class:'cl',normal:'cr'},
+      { code:'2400', name:'Short-term Loans',            type:'lia',class:'cl',normal:'cr'},
+      { code:'2700', name:'Long-term Loans',             type:'lia',class:'ncl',normal:'cr'},
+      { code:'3000', name:'Share Capital',               type:'eq', class:'eq', normal:'cr'},
+      { code:'3200', name:'Retained Earnings',           type:'eq', class:'eq', normal:'cr'},
+      { code:'4000', name:'Sales Revenue',               type:'rev',class:'rev',normal:'cr'},
+      { code:'4090', name:'Sales Returns & Discounts',   type:'rev',class:'rev',normal:'dr'},
+      { code:'4310', name:'FX Gain',                     type:'rev',class:'oi', normal:'cr'},
+      { code:'5000', name:'Cost of Goods Sold',          type:'exp',class:'cogs',normal:'dr'},
+      { code:'5230', name:'Freight & Customs',           type:'exp',class:'cogs',normal:'dr'},
+      { code:'5800', name:'FX Loss',                     type:'exp',class:'oe', normal:'dr'},
+      { code:'6000', name:'Salaries & Wages',            type:'exp',class:'opex',normal:'dr'},
+      { code:'6100', name:'Rent',                        type:'exp',class:'opex',normal:'dr'},
+      { code:'6200', name:'Utilities',                   type:'exp',class:'opex',normal:'dr'},
+      { code:'6300', name:'Marketing',                   type:'exp',class:'opex',normal:'dr'},
+      { code:'6400', name:'Bank Charges',                type:'exp',class:'opex',normal:'dr'},
+      { code:'6500', name:'Professional Fees',           type:'exp',class:'opex',normal:'dr'},
+      { code:'6600', name:'Travel & Transport',          type:'exp',class:'opex',normal:'dr'},
+      { code:'6800', name:'Insurance',                   type:'exp',class:'opex',normal:'dr'},
+      { code:'7000', name:'Interest Expense',            type:'exp',class:'fc',  normal:'dr'},
+      { code:'7900', name:'Income Tax Expense',          type:'exp',class:'tx',  normal:'dr'}
+    ]
+  },
+  restaurant: {
+    label: '🍽️ Restaurant / Café',
+    desc: 'F&B, café, takeaway',
+    accounts: [
+      { code:'1000', name:'Cash on Hand',                  type:'ast',class:'ca',normal:'dr'},
+      { code:'1010', name:'Petty Cash — Tips',             type:'ast',class:'ca',normal:'dr'},
+      { code:'1100', name:'Bank Account',                  type:'ast',class:'ca',normal:'dr'},
+      { code:'1200', name:'Accounts Receivable',           type:'ast',class:'ca',normal:'dr'},
+      { code:'1300', name:'Inventory — Food',              type:'ast',class:'ca',normal:'dr'},
+      { code:'1301', name:'Inventory — Beverages',         type:'ast',class:'ca',normal:'dr'},
+      { code:'1310', name:'Inventory — Supplies',          type:'ast',class:'ca',normal:'dr'},
+      { code:'1500', name:'Kitchen Equipment',             type:'ast',class:'fa',normal:'dr'},
+      { code:'1510', name:'Furniture & Fixtures',          type:'ast',class:'fa',normal:'dr'},
+      { code:'1600', name:'Accumulated Depreciation',      type:'ast',class:'fa',normal:'cr'},
+      { code:'2000', name:'Accounts Payable',              type:'lia',class:'cl',normal:'cr'},
+      { code:'2110', name:'Wages Payable',                 type:'lia',class:'cl',normal:'cr'},
+      { code:'2200', name:'GST/Service Charge Payable',    type:'lia',class:'cl',normal:'cr'},
+      { code:'2300', name:'Customer Deposits',             type:'lia',class:'cl',normal:'cr'},
+      { code:'3000', name:"Owner's Capital",               type:'eq', class:'eq', normal:'cr'},
+      { code:'3200', name:'Retained Earnings',             type:'eq', class:'eq', normal:'cr'},
+      { code:'4000', name:'Food Sales',                    type:'rev',class:'rev',normal:'cr'},
+      { code:'4001', name:'Beverage Sales',                type:'rev',class:'rev',normal:'cr'},
+      { code:'4002', name:'Service Charge Revenue',        type:'rev',class:'rev',normal:'cr'},
+      { code:'4003', name:'Catering / Events',             type:'rev',class:'rev',normal:'cr'},
+      { code:'5000', name:'Food Cost',                     type:'exp',class:'cogs',normal:'dr'},
+      { code:'5001', name:'Beverage Cost',                 type:'exp',class:'cogs',normal:'dr'},
+      { code:'5220', name:'Spoilage / Wastage',            type:'exp',class:'cogs',normal:'dr'},
+      { code:'6000', name:'Kitchen Staff Wages',           type:'exp',class:'opex',normal:'dr'},
+      { code:'6001', name:'Service Staff Wages',           type:'exp',class:'opex',normal:'dr'},
+      { code:'6100', name:'Rent',                          type:'exp',class:'opex',normal:'dr'},
+      { code:'6200', name:'Utilities (Gas/Power/Water)',   type:'exp',class:'opex',normal:'dr'},
+      { code:'6300', name:'Marketing',                     type:'exp',class:'opex',normal:'dr'},
+      { code:'6700', name:'Cleaning & Sanitation',         type:'exp',class:'opex',normal:'dr'},
+      { code:'6750', name:'Repairs & Maintenance',         type:'exp',class:'opex',normal:'dr'},
+      { code:'6800', name:'Insurance',                     type:'exp',class:'opex',normal:'dr'}
+    ]
+  },
+  hospitality: {
+    label: '🏨 Hospitality / Resort',
+    desc: 'Hotels, guesthouses, resorts',
+    accounts: [
+      { code:'1000', name:'Cash on Hand',                type:'ast',class:'ca',normal:'dr'},
+      { code:'1100', name:'Bank Account',                type:'ast',class:'ca',normal:'dr'},
+      { code:'1200', name:'AR — Guests',                 type:'ast',class:'ca',normal:'dr'},
+      { code:'1201', name:'AR — OTAs (Booking, Agoda)',  type:'ast',class:'ca',normal:'dr'},
+      { code:'1202', name:'AR — Corporate / Travel Agents',type:'ast',class:'ca',normal:'dr'},
+      { code:'1300', name:'F&B Inventory',               type:'ast',class:'ca',normal:'dr'},
+      { code:'1310', name:'Linen & Amenities Inventory', type:'ast',class:'ca',normal:'dr'},
+      { code:'1500', name:'Building',                    type:'ast',class:'fa',normal:'dr'},
+      { code:'1510', name:'Furniture & Equipment',       type:'ast',class:'fa',normal:'dr'},
+      { code:'1600', name:'Accumulated Depreciation',    type:'ast',class:'fa',normal:'cr'},
+      { code:'2000', name:'Accounts Payable',            type:'lia',class:'cl',normal:'cr'},
+      { code:'2200', name:'GST Payable',                 type:'lia',class:'cl',normal:'cr'},
+      { code:'2210', name:'TGST (Tourism GST) Payable',  type:'lia',class:'cl',normal:'cr'},
+      { code:'2220', name:'Green Tax Payable',           type:'lia',class:'cl',normal:'cr'},
+      { code:'2300', name:'Guest Deposits (Advance)',    type:'lia',class:'cl',normal:'cr'},
+      { code:'3000', name:'Share Capital',               type:'eq', class:'eq', normal:'cr'},
+      { code:'3200', name:'Retained Earnings',           type:'eq', class:'eq', normal:'cr'},
+      { code:'4000', name:'Room Revenue',                type:'rev',class:'rev',normal:'cr'},
+      { code:'4001', name:'F&B Revenue',                 type:'rev',class:'rev',normal:'cr'},
+      { code:'4002', name:'Spa / Recreation',            type:'rev',class:'rev',normal:'cr'},
+      { code:'4003', name:'Excursions',                  type:'rev',class:'rev',normal:'cr'},
+      { code:'4004', name:'Other Income',                type:'rev',class:'rev',normal:'cr'},
+      { code:'5000', name:'F&B Cost',                    type:'exp',class:'cogs',normal:'dr'},
+      { code:'5001', name:'Spa Supplies Cost',           type:'exp',class:'cogs',normal:'dr'},
+      { code:'5002', name:'Excursion Costs',             type:'exp',class:'cogs',normal:'dr'},
+      { code:'6000', name:'Staff Wages',                 type:'exp',class:'opex',normal:'dr'},
+      { code:'6200', name:'Utilities',                   type:'exp',class:'opex',normal:'dr'},
+      { code:'6300', name:'Marketing & Commissions',     type:'exp',class:'opex',normal:'dr'},
+      { code:'6750', name:'Repairs & Maintenance',       type:'exp',class:'opex',normal:'dr'}
+    ]
+  },
+  services: {
+    label: '💼 Services / Consulting',
+    desc: 'Consulting, professional services',
+    accounts: [
+      { code:'1000', name:'Cash',                        type:'ast',class:'ca',normal:'dr'},
+      { code:'1100', name:'Bank Account',                type:'ast',class:'ca',normal:'dr'},
+      { code:'1200', name:'Accounts Receivable',         type:'ast',class:'ca',normal:'dr'},
+      { code:'1210', name:'Unbilled Revenue (WIP)',      type:'ast',class:'ca',normal:'dr'},
+      { code:'1400', name:'Prepaid Expenses',            type:'ast',class:'ca',normal:'dr'},
+      { code:'1500', name:'Office Equipment',            type:'ast',class:'fa',normal:'dr'},
+      { code:'1600', name:'Accumulated Depreciation',    type:'ast',class:'fa',normal:'cr'},
+      { code:'2000', name:'Accounts Payable',            type:'lia',class:'cl',normal:'cr'},
+      { code:'2110', name:'Wages Payable',               type:'lia',class:'cl',normal:'cr'},
+      { code:'2200', name:'GST Payable',                 type:'lia',class:'cl',normal:'cr'},
+      { code:'2300', name:'Unearned Revenue',            type:'lia',class:'cl',normal:'cr'},
+      { code:'3000', name:'Owner Equity',                type:'eq', class:'eq', normal:'cr'},
+      { code:'3200', name:'Retained Earnings',           type:'eq', class:'eq', normal:'cr'},
+      { code:'4000', name:'Service Revenue',             type:'rev',class:'rev',normal:'cr'},
+      { code:'4001', name:'Consulting Revenue',          type:'rev',class:'rev',normal:'cr'},
+      { code:'4002', name:'Retainer Income',             type:'rev',class:'rev',normal:'cr'},
+      { code:'6000', name:'Consultant Salaries',         type:'exp',class:'opex',normal:'dr'},
+      { code:'6100', name:'Office Rent',                 type:'exp',class:'opex',normal:'dr'},
+      { code:'6200', name:'Utilities',                   type:'exp',class:'opex',normal:'dr'},
+      { code:'6500', name:'Professional Fees',           type:'exp',class:'opex',normal:'dr'},
+      { code:'6600', name:'Travel & Client Entertainment',type:'exp',class:'opex',normal:'dr'},
+      { code:'6950', name:'Software & Subscriptions',    type:'exp',class:'opex',normal:'dr'}
+    ]
+  },
+  manufacturing: {
+    label: '🏭 Manufacturing',
+    desc: 'Production, factories',
+    accounts: [
+      { code:'1000', name:'Cash on Hand',                type:'ast',class:'ca',normal:'dr'},
+      { code:'1100', name:'Bank Account',                type:'ast',class:'ca',normal:'dr'},
+      { code:'1200', name:'Accounts Receivable',         type:'ast',class:'ca',normal:'dr'},
+      { code:'1300', name:'Raw Materials',               type:'ast',class:'ca',normal:'dr'},
+      { code:'1301', name:'Work in Progress (WIP)',      type:'ast',class:'ca',normal:'dr'},
+      { code:'1302', name:'Finished Goods',              type:'ast',class:'ca',normal:'dr'},
+      { code:'1500', name:'Machinery & Plant',           type:'ast',class:'fa',normal:'dr'},
+      { code:'1510', name:'Factory Building',            type:'ast',class:'fa',normal:'dr'},
+      { code:'1600', name:'Accumulated Depreciation',    type:'ast',class:'fa',normal:'cr'},
+      { code:'2000', name:'Accounts Payable',            type:'lia',class:'cl',normal:'cr'},
+      { code:'2200', name:'GST Payable',                 type:'lia',class:'cl',normal:'cr'},
+      { code:'3000', name:'Share Capital',               type:'eq', class:'eq', normal:'cr'},
+      { code:'3200', name:'Retained Earnings',           type:'eq', class:'eq', normal:'cr'},
+      { code:'4000', name:'Product Sales Revenue',       type:'rev',class:'rev',normal:'cr'},
+      { code:'5000', name:'Cost of Goods Manufactured',  type:'exp',class:'cogs',normal:'dr'},
+      { code:'5100', name:'Direct Labour',               type:'exp',class:'cogs',normal:'dr'},
+      { code:'5200', name:'Manufacturing Overhead',      type:'exp',class:'cogs',normal:'dr'},
+      { code:'6000', name:'Office Salaries',             type:'exp',class:'opex',normal:'dr'},
+      { code:'6100', name:'Rent',                        type:'exp',class:'opex',normal:'dr'},
+      { code:'6200', name:'Utilities',                   type:'exp',class:'opex',normal:'dr'},
+      { code:'6750', name:'Maintenance & Repairs',       type:'exp',class:'opex',normal:'dr'}
+    ]
+  },
+  pharma: {
+    label: '💊 Pharmacy / Medical',
+    desc: 'Pharmacies, medical supplies',
+    accounts: [
+      { code:'1000', name:'Cash on Hand',                type:'ast',class:'ca',normal:'dr'},
+      { code:'1100', name:'Bank Account',                type:'ast',class:'ca',normal:'dr'},
+      { code:'1200', name:'AR — Customers',              type:'ast',class:'ca',normal:'dr'},
+      { code:'1201', name:'AR — Aasandha / Insurance',   type:'ast',class:'ca',normal:'dr'},
+      { code:'1300', name:'Inventory — Prescription Drugs',type:'ast',class:'ca',normal:'dr'},
+      { code:'1301', name:'Inventory — OTC Products',    type:'ast',class:'ca',normal:'dr'},
+      { code:'1302', name:'Inventory — Medical Supplies',type:'ast',class:'ca',normal:'dr'},
+      { code:'1500', name:'Pharmacy Equipment',          type:'ast',class:'fa',normal:'dr'},
+      { code:'1600', name:'Accumulated Depreciation',    type:'ast',class:'fa',normal:'cr'},
+      { code:'2000', name:'Accounts Payable',            type:'lia',class:'cl',normal:'cr'},
+      { code:'2200', name:'GST Payable',                 type:'lia',class:'cl',normal:'cr'},
+      { code:'3000', name:'Share Capital',               type:'eq', class:'eq', normal:'cr'},
+      { code:'3200', name:'Retained Earnings',           type:'eq', class:'eq', normal:'cr'},
+      { code:'4000', name:'Prescription Sales',          type:'rev',class:'rev',normal:'cr'},
+      { code:'4001', name:'OTC Sales',                   type:'rev',class:'rev',normal:'cr'},
+      { code:'4002', name:'Medical Supplies Sales',      type:'rev',class:'rev',normal:'cr'},
+      { code:'5000', name:'Cost of Drugs Sold',          type:'exp',class:'cogs',normal:'dr'},
+      { code:'5220', name:'Expired Stock Write-off',     type:'exp',class:'cogs',normal:'dr'},
+      { code:'6000', name:'Pharmacist Salaries',         type:'exp',class:'opex',normal:'dr'},
+      { code:'6100', name:'Rent',                        type:'exp',class:'opex',normal:'dr'},
+      { code:'6500', name:'Regulatory & Licensing Fees', type:'exp',class:'opex',normal:'dr'}
+    ]
+  },
+  blank: {
+    label: '⬜ Start Empty',
+    desc: 'I will build it myself',
+    accounts: []
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   BOOT
+   ═══════════════════════════════════════════════════════════ */
+function init() {
+  // Show user info
+  const av = document.getElementById('userAv');
+  av.textContent = session.short || (session.name||'U')[0];
+  av.style.background = session.color || '#1849a9';
+  document.getElementById('userName').textContent = (session.name||'').split(' ')[0];
+  document.getElementById('coPill').textContent = session.coName || 'Workspace';
+
+  // Migrate tenant data from old keys if any
+  ensureDefaults();
+
+  // First-run check — if no company info, jump to company tab
+  if (!tstore.get('company')?.name) {
+    CUR_VIEW = 'dashboard';
+  }
+  renderSidebar();
+  goto(CUR_VIEW);
+}
+
+function ensureDefaults() {
+  // Pre-fill company info from signup data
+  if (!tstore.get('company')) {
+    const tenants = JSON.parse(localStorage.getItem(TENANTS_KEY) || '{}');
+    const tn = tenants[TENANT];
+    if (tn) {
+      tstore.set('company', {
+        name: tn.coName,
+        slug: tn.slug,
+        industry: tn.industry,
+        country: tn.country || 'MV',
+        currency: tn.currency || 'MVR',
+        size: tn.size,
+        fiscalYearStart: '01-01',
+        regNumber: '',
+        tin: '',
+        address: '',
+        phone: tn.owner?.phone || '',
+        email: tn.email,
+        website: ''
+      });
+    }
+  }
+  if (!tstore.get('tax')) {
+    tstore.set('tax', { gstEnabled: false, gstRate: 8, tgstRate: 12, bptEnabled: false, bptRate: 15 });
+  }
+}
+
+init();
+</script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   VIEWS — one function per sidebar entry
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── DASHBOARD ── */
+function view_dashboard() {
+  const co = tstore.get('company') || {};
+  const coa = tstore.get('coa') || [];
+  const items = tstore.get('items') || [];
+  const customers = tstore.get('customers') || [];
+  const vendors = tstore.get('vendors') || [];
+  const tax = tstore.get('tax') || {};
+  const users = tstore.get('users') || [];
+
+  // Calculate setup progress
+  const steps = [
+    { key:'company',   label:'Company information',     done: !!co.name },
+    { key:'coa',       label:'Chart of accounts',       done: coa.length > 0 },
+    { key:'tax',       label:'Tax settings configured', done: tax.gstEnabled !== undefined },
+    { key:'items',     label:'At least one product',    done: items.length > 0 },
+    { key:'customers', label:'At least one customer',   done: customers.length > 0 },
+    { key:'vendors',   label:'At least one vendor',     done: vendors.length > 0 }
+  ];
+  const doneCount = steps.filter(s => s.done).length;
+  const pct = Math.round((doneCount / steps.length) * 100);
+
+  document.getElementById('main').innerHTML = `
+    <div class="ph">
+      <div>
+        <div class="pt">Setup Dashboard</div>
+        <div class="ps">Configure your company. Each step makes the ERP modules work better for you.</div>
+      </div>
+      <div class="brow">
+        <a href="/app" class="btn">← Back to modules</a>
+      </div>
+    </div>
+
+    <div class="progress-card">
+      <div class="pg-head">
+        <div class="pg-icon">🚀</div>
+        <div style="flex:1">
+          <h2>Welcome, ${esc((session.name||'').split(' ')[0])}!</h2>
+          <p>You're setting up <b>${esc(co.name || 'your company')}</b>. Complete these steps to get the most out of YenuERP.</p>
+        </div>
+      </div>
+      <div class="pb-wrap"><div class="pb-fill" style="width:${pct}%"></div></div>
+      <div class="pg-meta">
+        <span class="pg-step">${doneCount} of ${steps.length} steps complete</span>
+        <span class="pg-pct">${pct}%</span>
+      </div>
+    </div>
+
+    <div class="sgrid">
+      <div class="sc blue"><div class="sl">GL Accounts</div><div class="sv">${coa.length}</div><div class="ss">${coa.length===0?'⚠ Add accounts to start':'In your chart'}</div></div>
+      <div class="sc green"><div class="sl">Products</div><div class="sv">${items.length}</div><div class="ss">Active items</div></div>
+      <div class="sc amber"><div class="sl">Customers</div><div class="sv">${customers.length}</div><div class="ss">In your CRM</div></div>
+      <div class="sc purple"><div class="sl">Vendors</div><div class="sv">${vendors.length}</div><div class="ss">Suppliers</div></div>
+    </div>
+
+    <div class="card">
+      <div class="ch">
+        <div><div class="ct">Setup Checklist</div><div class="cs">Tap any step to configure it</div></div>
+      </div>
+      <div class="cb">
+        <div class="checklist">
+          ${[
+            { key:'company',   ic:'🏢', title:'Company Information',    desc:'Name, address, registration & tax IDs' },
+            { key:'coa',       ic:'📒', title:'Chart of Accounts',      desc:'Use an industry template or build your own' },
+            { key:'tax',       ic:'🧾', title:'Tax Settings',           desc:'GST, BPT, withholding rates' },
+            { key:'items',     ic:'📦', title:'Products & Items',       desc:'Add what you sell — for invoicing & POS' },
+            { key:'customers', ic:'👥', title:'Customers',              desc:'Build your CRM list' },
+            { key:'vendors',   ic:'🚚', title:'Vendors',                desc:'Your suppliers' },
+            { key:'branding',  ic:'🎨', title:'Branding & Logo',        desc:'Make invoices look professional' },
+            { key:'users',     ic:'👤', title:'Team Members',           desc:'Invite your accountant, cashiers, etc.' }
+          ].map(item => {
+            const status = setupStatus(item.key);
+            return `<a class="cl-item ${status==='done'?'done':''}" onclick="goto('${item.key}')">
+              <div class="cl-row">
+                <div class="cl-check">${status==='done'?'✓':''}</div>
+                <h4>${item.ic} ${item.title}</h4>
+              </div>
+              <p>${item.desc}</p>
+              <div class="cl-status">
+                <span>${status==='done'?'Configured':'Not configured yet'}</span>
+                <span>${status==='done'?'Edit →':'Set up →'}</span>
+              </div>
+            </a>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Need help getting started?</div></div>
+      <div class="cb" style="display:flex;gap:14px;flex-wrap:wrap">
+        <a class="btn" onclick="goto('coa');setTimeout(showCoaTemplatePicker, 200)">📒 Load a starter COA</a>
+        <a class="btn" onclick="goto('data')">📥 Import existing data (CSV)</a>
+        <a class="btn" href="mailto:support@yenuerp.mv">✉ Email support</a>
+      </div>
+    </div>
+  `;
+}
+
+/* ── COMPANY INFO ── */
+function view_company() {
+  const c = tstore.get('company') || {};
+  document.getElementById('main').innerHTML = `
+    <div class="ph">
+      <div>
+        <div class="pt">🏢 Company Information</div>
+        <div class="ps">Your basic business details — used on invoices, receipts, and reports.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Business details</div></div>
+      <div class="cb">
+        <form id="coForm" onsubmit="event.preventDefault();saveCompany()">
+          <div class="fg2">
+            <div class="fg"><label class="fl">Company name <span class="req">*</span></label>
+              <input class="fi" name="name" value="${esc(c.name)}" required></div>
+            <div class="fg"><label class="fl">Legal entity type</label>
+              <select class="fs" name="legalType">
+                ${['Pvt Ltd','Public Ltd','Sole Proprietorship','Partnership','Cooperative','Other']
+                  .map(t=>`<option ${c.legalType===t?'selected':''}>${t}</option>`).join('')}
+              </select></div>
+          </div>
+          <div class="fg2">
+            <div class="fg"><label class="fl">Business registration number</label>
+              <input class="fi" name="regNumber" value="${esc(c.regNumber||'')}" placeholder="e.g. C-1234/2024"></div>
+            <div class="fg"><label class="fl">Tax ID / TIN</label>
+              <input class="fi" name="tin" value="${esc(c.tin||'')}" placeholder="e.g. 1234567-GST"></div>
+          </div>
+          <div class="fg"><label class="fl">Address</label>
+            <textarea class="fta" name="address" rows="3" placeholder="Street, building, atoll, postcode">${esc(c.address||'')}</textarea></div>
+          <div class="fg3">
+            <div class="fg"><label class="fl">Phone</label>
+              <input class="fi" name="phone" value="${esc(c.phone||'')}" placeholder="+960 ..."></div>
+            <div class="fg"><label class="fl">Email</label>
+              <input class="fi" type="email" name="email" value="${esc(c.email||'')}"></div>
+            <div class="fg"><label class="fl">Website</label>
+              <input class="fi" name="website" value="${esc(c.website||'')}" placeholder="https://..."></div>
+          </div>
+          <div class="fg3">
+            <div class="fg"><label class="fl">Industry</label>
+              <select class="fs" name="industry">
+                ${[['retail','Retail/Shop'],['trading','Trading/Distribution'],['restaurant','Restaurant/Café'],['hospitality','Hospitality/Resort'],['services','Services/Consulting'],['manufacturing','Manufacturing'],['pharma','Pharmacy/Medical'],['construction','Construction'],['other','Other']]
+                  .map(([k,l])=>`<option value="${k}" ${c.industry===k?'selected':''}>${l}</option>`).join('')}
+              </select></div>
+            <div class="fg"><label class="fl">Country</label>
+              <select class="fs" name="country">
+                <option value="MV" ${c.country==='MV'?'selected':''}>🇲🇻 Maldives</option>
+                <option value="IN" ${c.country==='IN'?'selected':''}>🇮🇳 India</option>
+                <option value="LK" ${c.country==='LK'?'selected':''}>🇱🇰 Sri Lanka</option>
+                <option value="OTHER" ${c.country==='OTHER'?'selected':''}>Other</option>
+              </select></div>
+            <div class="fg"><label class="fl">Base currency</label>
+              <select class="fs" name="currency">
+                ${['MVR','USD','EUR','INR','GBP','AED'].map(v=>`<option ${c.currency===v?'selected':''}>${v}</option>`).join('')}
+              </select></div>
+          </div>
+          <div class="fg2">
+            <div class="fg"><label class="fl">Fiscal year start</label>
+              <select class="fs" name="fiscalYearStart">
+                ${[['01-01','January 1'],['04-01','April 1'],['07-01','July 1'],['10-01','October 1']]
+                  .map(([k,l])=>`<option value="${k}" ${c.fiscalYearStart===k?'selected':''}>${l}</option>`).join('')}
+              </select></div>
+            <div class="fg"><label class="fl">Company size</label>
+              <select class="fs" name="size">
+                ${['1','2-10','11-50','51-200','200+'].map(v=>`<option ${c.size===v?'selected':''}>${v}</option>`).join('')}
+              </select></div>
+          </div>
+          <button type="submit" class="btn btn-p">💾 Save changes</button>
+        </form>
+      </div>
+    </div>
+  `;
+}
+function saveCompany() {
+  const f = document.getElementById('coForm');
+  const data = {};
+  for (const el of f.elements) if (el.name) data[el.name] = el.value;
+  const existing = tstore.get('company') || {};
+  tstore.set('company', { ...existing, ...data });
+  toast('Company info saved ✓');
+  renderSidebar();
+}
+
+/* ── CHART OF ACCOUNTS ── */
+function view_coa() {
+  const coa = tstore.get('coa') || [];
+  document.getElementById('main').innerHTML = `
+    <div class="ph">
+      <div>
+        <div class="pt">📒 Chart of Accounts</div>
+        <div class="ps">${coa.length} account${coa.length===1?'':'s'} configured · use a template to get started fast</div>
+      </div>
+      <div class="brow">
+        ${coa.length===0?'':`<button class="btn" onclick="showCoaTemplatePicker()">📋 Load template</button>`}
+        <button class="btn btn-p" onclick="editAccount()">＋ Add account</button>
+      </div>
+    </div>
+
+    ${coa.length === 0 ? `
+      <div class="card">
+        <div class="cb">
+          <div class="empty">
+            <div class="empty-ic">📒</div>
+            <div class="empty-tt">Your chart of accounts is empty</div>
+            <div class="empty-sb">Pick a template to get a complete starter COA for your industry, or add accounts one by one.</div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:18px">
+            <div class="fl" style="text-align:center;margin-bottom:12px">Pick a starter template</div>
+            <div class="tmpl-grid">
+              ${Object.entries(COA_TEMPLATES).map(([k,t]) => `
+                <div class="tmpl" onclick="loadTemplate('${k}')">
+                  <div class="t-ic">${t.label.split(' ')[0]}</div>
+                  <h5>${esc(t.label.substring(t.label.indexOf(' ')+1))}</h5>
+                  <p>${esc(t.desc)}</p>
+                  <div style="margin-top:6px;font-size:10px;color:var(--blue);font-weight:700">${t.accounts.length} accounts</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    ` : `
+      <div class="card">
+        <div class="ch">
+          <div><div class="ct">Accounts</div></div>
+          <input class="fi" style="width:240px" placeholder="🔍 Search code or name…" oninput="filterCoa(this.value)" id="coaSearch">
+        </div>
+        <div class="tw">
+          <table id="coaTable">
+            <thead><tr><th>Code</th><th>Name</th><th>Type</th><th>Class</th><th>Normal</th><th></th></tr></thead>
+            <tbody>
+              ${coa.slice().sort((a,b)=>a.code.localeCompare(b.code)).map(a => `
+                <tr data-search="${esc(a.code+' '+a.name).toLowerCase()}">
+                  <td><span class="mono">${esc(a.code)}</span></td>
+                  <td>${esc(a.name)}</td>
+                  <td><span class="bdg b-${a.type}">${typeLabel(a.type)}</span></td>
+                  <td>${classLabel(a.class)}</td>
+                  <td>${a.normal==='dr'?'DR':'CR'}</td>
+                  <td class="row-actions">
+                    <button class="btn btn-xs" onclick='editAccount(${JSON.stringify(a)})'>Edit</button>
+                    <button class="btn btn-xs" onclick='deleteAccount("${esc(a.code)}")' style="color:var(--red)">×</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `}
+  `;
+}
+function typeLabel(t) {
+  return {ast:'Asset',lia:'Liability',eq:'Equity',rev:'Revenue',exp:'Expense'}[t] || t;
+}
+function classLabel(c) {
+  return {ca:'Current Asset',fa:'Fixed Asset',cl:'Current Liability',ncl:'Non-current Liability',eq:'Equity',rev:'Revenue',oi:'Other Income',cogs:'COGS',opex:'OpEx',oe:'Other Expense',fc:'Finance',tx:'Tax'}[c] || c;
+}
+function filterCoa(q) {
+  q = q.trim().toLowerCase();
+  document.querySelectorAll('#coaTable tbody tr').forEach(tr => {
+    tr.style.display = !q || tr.dataset.search.includes(q) ? '' : 'none';
+  });
+}
+function editAccount(acc) {
+  const isNew = !acc;
+  acc = acc || { code:'', name:'', type:'exp', class:'opex', normal:'dr' };
+  showModal(`
+    <div class="m-head">
+      <div><div class="m-tt">${isNew?'New':'Edit'} Account</div></div>
+      <button class="m-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="m-body">
+      <form id="accForm" onsubmit="event.preventDefault();saveAccount(${isNew},'${esc(acc.code)}')">
+        <div class="fg2">
+          <div class="fg"><label class="fl">Code <span class="req">*</span></label>
+            <input class="fi" name="code" value="${esc(acc.code)}" required ${isNew?'':'readonly'}></div>
+          <div class="fg"><label class="fl">Normal balance</label>
+            <select class="fs" name="normal">
+              <option value="dr" ${acc.normal==='dr'?'selected':''}>Debit</option>
+              <option value="cr" ${acc.normal==='cr'?'selected':''}>Credit</option>
+            </select></div>
+        </div>
+        <div class="fg"><label class="fl">Account name <span class="req">*</span></label>
+          <input class="fi" name="name" value="${esc(acc.name)}" required></div>
+        <div class="fg2">
+          <div class="fg"><label class="fl">Type</label>
+            <select class="fs" name="type" onchange="updateClassOptions(this.value)">
+              ${[['ast','Asset'],['lia','Liability'],['eq','Equity'],['rev','Revenue'],['exp','Expense']].map(([k,l])=>`<option value="${k}" ${acc.type===k?'selected':''}>${l}</option>`).join('')}
+            </select></div>
+          <div class="fg"><label class="fl">Class</label>
+            <select class="fs" name="class" id="classSelect">
+              ${classOptionsFor(acc.type, acc.class)}
+            </select></div>
+        </div>
+      </form>
+    </div>
+    <div class="m-foot">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-p" onclick="document.getElementById('accForm').requestSubmit()">${isNew?'Add account':'Save changes'}</button>
+    </div>
+  `);
+}
+function classOptionsFor(type, selected) {
+  const opts = {
+    ast: [['ca','Current Asset'],['fa','Fixed Asset']],
+    lia: [['cl','Current Liability'],['ncl','Non-current Liability']],
+    eq:  [['eq','Equity']],
+    rev: [['rev','Operating Revenue'],['oi','Other Income']],
+    exp: [['cogs','COGS'],['opex','Operating Expense'],['oe','Other Expense'],['fc','Finance Cost'],['tx','Tax']]
+  }[type] || [];
+  return opts.map(([k,l]) => `<option value="${k}" ${selected===k?'selected':''}>${l}</option>`).join('');
+}
+function updateClassOptions(type) {
+  document.getElementById('classSelect').innerHTML = classOptionsFor(type);
+}
+function saveAccount(isNew, oldCode) {
+  const f = document.getElementById('accForm');
+  const data = {};
+  for (const el of f.elements) if (el.name) data[el.name] = el.value;
+  const coa = tstore.get('coa') || [];
+  if (isNew) {
+    if (coa.find(a => a.code === data.code)) { toast('Code already exists', true); return; }
+    coa.push(data);
+  } else {
+    const idx = coa.findIndex(a => a.code === oldCode);
+    if (idx >= 0) coa[idx] = data;
+  }
+  tstore.set('coa', coa);
+  closeModal();
+  toast('Account saved ✓');
+  view_coa();
+  renderSidebar();
+}
+function deleteAccount(code) {
+  if (!confirm(`Delete account ${code}?`)) return;
+  const coa = (tstore.get('coa') || []).filter(a => a.code !== code);
+  tstore.set('coa', coa);
+  toast('Account deleted');
+  view_coa();
+  renderSidebar();
+}
+function showCoaTemplatePicker() {
+  showModal(`
+    <div class="m-head">
+      <div><div class="m-tt">Load Starter Template</div><div class="m-sb">Pre-built chart of accounts for your industry</div></div>
+      <button class="m-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="m-body">
+      <p style="font-size:12.5px;color:var(--t2);margin-bottom:14px">Loading a template will ADD these accounts to your existing chart (no duplicates).</p>
+      <div class="tmpl-grid">
+        ${Object.entries(COA_TEMPLATES).map(([k,t]) => `
+          <div class="tmpl" onclick="loadTemplate('${k}')">
+            <div class="t-ic">${t.label.split(' ')[0]}</div>
+            <h5>${esc(t.label.substring(t.label.indexOf(' ')+1))}</h5>
+            <p>${esc(t.desc)}</p>
+            <div style="margin-top:6px;font-size:10px;color:var(--blue);font-weight:700">${t.accounts.length} accounts</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `, true);
+}
+function loadTemplate(key) {
+  const tmpl = COA_TEMPLATES[key];
+  if (!tmpl) return;
+  const existing = tstore.get('coa') || [];
+  const existingCodes = new Set(existing.map(a => a.code));
+  let added = 0;
+  tmpl.accounts.forEach(a => {
+    if (!existingCodes.has(a.code)) { existing.push(a); added++; }
+  });
+  tstore.set('coa', existing);
+  closeModal();
+  toast(`Added ${added} accounts ✓`);
+  view_coa();
+  renderSidebar();
+}
+
+/* ── PRODUCTS / ITEMS ── */
+function view_items() {
+  const items = tstore.get('items') || [];
+  document.getElementById('main').innerHTML = `
+    <div class="ph">
+      <div><div class="pt">📦 Products / Items</div><div class="ps">${items.length} item${items.length===1?'':'s'} · for invoicing & POS</div></div>
+      <div class="brow"><button class="btn btn-p" onclick="editItem()">＋ Add product</button></div>
+    </div>
+    ${items.length === 0 ? `
+      <div class="card"><div class="cb"><div class="empty">
+        <div class="empty-ic">📦</div>
+        <div class="empty-tt">No products yet</div>
+        <div class="empty-sb">Add the things you sell — POS and invoicing depend on this.</div>
+        <button class="btn btn-p" onclick="editItem()">＋ Add your first product</button>
+      </div></div></div>
+    ` : `
+      <div class="card">
+        <div class="ch"><div class="ct">Products</div>
+          <input class="fi" style="width:240px" placeholder="🔍 Search…" oninput="filterItems(this.value)" id="itSearch"></div>
+        <div class="tw">
+          <table id="itTable">
+            <thead><tr><th>SKU</th><th>Name</th><th>Category</th><th class="num">Cost</th><th class="num">Price</th><th class="num">Stock</th><th>Tax</th><th></th></tr></thead>
+            <tbody>
+              ${items.map(i => `
+                <tr data-search="${esc((i.sku||'')+' '+i.name).toLowerCase()}">
+                  <td><span class="mono">${esc(i.sku||'—')}</span></td>
+                  <td>${esc(i.name)}</td>
+                  <td>${esc(i.category||'—')}</td>
+                  <td class="num">${fmt(i.cost)}</td>
+                  <td class="num">${fmt(i.price)}</td>
+                  <td class="num">${(i.stock||0).toLocaleString()}</td>
+                  <td>${i.taxRate?i.taxRate+'%':'—'}</td>
+                  <td class="row-actions">
+                    <button class="btn btn-xs" onclick='editItem(${JSON.stringify(i)})'>Edit</button>
+                    <button class="btn btn-xs" onclick='deleteItem("${esc(i.id)}")' style="color:var(--red)">×</button>
+                  </td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `}
+  `;
+}
+function filterItems(q) {
+  q = q.trim().toLowerCase();
+  document.querySelectorAll('#itTable tbody tr').forEach(tr => {
+    tr.style.display = !q || tr.dataset.search.includes(q) ? '' : 'none';
+  });
+}
+function editItem(item) {
+  const isNew = !item;
+  item = item || { id: uid(), sku:'', name:'', barcode:'', category:'', uom:'pcs', cost:0, price:0, stock:0, taxRate:0, glRev:'4000', glCogs:'5000', glInv:'1300' };
+  const coa = tstore.get('coa') || [];
+  const revAccs = coa.filter(a => a.type==='rev');
+  const cogsAccs = coa.filter(a => a.class==='cogs');
+  const invAccs = coa.filter(a => a.class==='ca' && /inven/i.test(a.name));
+
+  showModal(`
+    <div class="m-head">
+      <div><div class="m-tt">${isNew?'New':'Edit'} Product</div></div>
+      <button class="m-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="m-body">
+      <form id="itForm" onsubmit="event.preventDefault();saveItem(${isNew},'${esc(item.id)}')">
+        <div class="fg2">
+          <div class="fg"><label class="fl">SKU / Code</label><input class="fi" name="sku" value="${esc(item.sku)}" placeholder="auto if blank"></div>
+          <div class="fg"><label class="fl">Barcode</label><input class="fi" name="barcode" value="${esc(item.barcode)}" placeholder="optional"></div>
+        </div>
+        <div class="fg"><label class="fl">Product name <span class="req">*</span></label><input class="fi" name="name" value="${esc(item.name)}" required></div>
+        <div class="fg2">
+          <div class="fg"><label class="fl">Category</label><input class="fi" name="category" value="${esc(item.category)}" placeholder="e.g. Beverages"></div>
+          <div class="fg"><label class="fl">Unit of measure</label><select class="fs" name="uom">${['pcs','box','kg','g','L','ml','m','sq.ft','hour','day'].map(v=>`<option ${item.uom===v?'selected':''}>${v}</option>`).join('')}</select></div>
+        </div>
+        <div class="fg3">
+          <div class="fg"><label class="fl">Cost</label><input class="fi" type="number" step="0.01" name="cost" value="${item.cost||0}"></div>
+          <div class="fg"><label class="fl">Sell price</label><input class="fi" type="number" step="0.01" name="price" value="${item.price||0}"></div>
+          <div class="fg"><label class="fl">Opening stock</label><input class="fi" type="number" step="0.01" name="stock" value="${item.stock||0}"></div>
+        </div>
+        <div class="fg2">
+          <div class="fg"><label class="fl">Tax rate (%)</label><input class="fi" type="number" step="0.01" name="taxRate" value="${item.taxRate||0}"></div>
+          <div class="fg"><label class="fl">Revenue account</label><select class="fs" name="glRev">${revAccs.map(a=>`<option value="${a.code}" ${item.glRev===a.code?'selected':''}>${a.code} — ${esc(a.name)}</option>`).join('')||'<option>(create a revenue account first)</option>'}</select></div>
+        </div>
+        <div class="fg2">
+          <div class="fg"><label class="fl">COGS account</label><select class="fs" name="glCogs">${cogsAccs.map(a=>`<option value="${a.code}" ${item.glCogs===a.code?'selected':''}>${a.code} — ${esc(a.name)}</option>`).join('')||'<option>(none)</option>'}</select></div>
+          <div class="fg"><label class="fl">Inventory account</label><select class="fs" name="glInv">${invAccs.map(a=>`<option value="${a.code}" ${item.glInv===a.code?'selected':''}>${a.code} — ${esc(a.name)}</option>`).join('')||'<option>(none)</option>'}</select></div>
+        </div>
+      </form>
+    </div>
+    <div class="m-foot">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-p" onclick="document.getElementById('itForm').requestSubmit()">${isNew?'Add product':'Save'}</button>
+    </div>
+  `, true);
+}
+function saveItem(isNew, id) {
+  const f = document.getElementById('itForm');
+  const data = { id };
+  for (const el of f.elements) if (el.name) data[el.name] = ['cost','price','stock','taxRate'].includes(el.name) ? parseFloat(el.value)||0 : el.value;
+  if (!data.sku) data.sku = 'SKU-' + Date.now().toString(36).toUpperCase();
+  const items = tstore.get('items') || [];
+  if (isNew) items.push(data);
+  else {
+    const idx = items.findIndex(i => i.id === id);
+    if (idx >= 0) items[idx] = data;
+  }
+  tstore.set('items', items);
+  closeModal();
+  toast('Product saved ✓');
+  view_items();
+  renderSidebar();
+}
+function deleteItem(id) {
+  if (!confirm('Delete this product?')) return;
+  const items = (tstore.get('items') || []).filter(i => i.id !== id);
+  tstore.set('items', items);
+  toast('Product deleted');
+  view_items();
+  renderSidebar();
+}
+
+/* ── CUSTOMERS ── */
+function view_customers() {
+  const customers = tstore.get('customers') || [];
+  document.getElementById('main').innerHTML = `
+    <div class="ph">
+      <div><div class="pt">👥 Customers</div><div class="ps">${customers.length} customer${customers.length===1?'':'s'} in your CRM</div></div>
+      <div class="brow"><button class="btn btn-p" onclick="editCustomer()">＋ Add customer</button></div>
+    </div>
+    ${customers.length === 0 ? `
+      <div class="card"><div class="cb"><div class="empty">
+        <div class="empty-ic">👥</div><div class="empty-tt">No customers yet</div>
+        <div class="empty-sb">Add your customers to send invoices and track receivables.</div>
+        <button class="btn btn-p" onclick="editCustomer()">＋ Add your first customer</button>
+      </div></div></div>
+    ` : `
+      <div class="card">
+        <div class="ch"><div class="ct">Customers</div>
+          <input class="fi" style="width:240px" placeholder="🔍 Search…" oninput="filterCustomers(this.value)" id="csSearch"></div>
+        <div class="tw">
+          <table id="csTable">
+            <thead><tr><th>Name</th><th>Type</th><th>Email</th><th>Phone</th><th class="num">Credit limit</th><th>Currency</th><th></th></tr></thead>
+            <tbody>
+              ${customers.map(c => `
+                <tr data-search="${esc(c.name+' '+(c.email||'')+' '+(c.phone||'')).toLowerCase()}">
+                  <td><b>${esc(c.name)}</b>${c.tin?'<div style="font-size:10px;color:var(--t3);font-family:Consolas">TIN: '+esc(c.tin)+'</div>':''}</td>
+                  <td>${esc(c.segment||'—')}</td>
+                  <td>${esc(c.email||'—')}</td>
+                  <td>${esc(c.phone||'—')}</td>
+                  <td class="num">${c.creditLimit?fmt(c.creditLimit):'—'}</td>
+                  <td>${esc(c.currency||'MVR')}</td>
+                  <td class="row-actions">
+                    <button class="btn btn-xs" onclick='editCustomer(${JSON.stringify(c)})'>Edit</button>
+                    <button class="btn btn-xs" onclick='deleteCustomer("${esc(c.id)}")' style="color:var(--red)">×</button>
+                  </td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `}
+  `;
+}
+function filterCustomers(q) {
+  q = q.trim().toLowerCase();
+  document.querySelectorAll('#csTable tbody tr').forEach(tr => {
+    tr.style.display = !q || tr.dataset.search.includes(q) ? '' : 'none';
+  });
+}
+function editCustomer(c) {
+  const isNew = !c;
+  c = c || { id: uid(), name:'', segment:'b2c', currency:'MVR', creditLimit:0, tin:'', phone:'', email:'', address:'' };
+  showModal(`
+    <div class="m-head">
+      <div><div class="m-tt">${isNew?'New':'Edit'} Customer</div></div>
+      <button class="m-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="m-body">
+      <form id="csForm" onsubmit="event.preventDefault();saveCustomer(${isNew},'${esc(c.id)}')">
+        <div class="fg"><label class="fl">Customer name <span class="req">*</span></label><input class="fi" name="name" value="${esc(c.name)}" required></div>
+        <div class="fg3">
+          <div class="fg"><label class="fl">Customer type</label><select class="fs" name="segment">${['b2c','b2b','gov','hospitality','wholesale'].map(v=>`<option ${c.segment===v?'selected':''}>${v}</option>`).join('')}</select></div>
+          <div class="fg"><label class="fl">Currency</label><select class="fs" name="currency">${['MVR','USD','EUR','INR','GBP'].map(v=>`<option ${c.currency===v?'selected':''}>${v}</option>`).join('')}</select></div>
+          <div class="fg"><label class="fl">Credit limit</label><input class="fi" type="number" step="0.01" name="creditLimit" value="${c.creditLimit||0}"></div>
+        </div>
+        <div class="fg2">
+          <div class="fg"><label class="fl">Email</label><input class="fi" type="email" name="email" value="${esc(c.email||'')}"></div>
+          <div class="fg"><label class="fl">Phone</label><input class="fi" name="phone" value="${esc(c.phone||'')}"></div>
+        </div>
+        <div class="fg2">
+          <div class="fg"><label class="fl">TIN</label><input class="fi" name="tin" value="${esc(c.tin||'')}"></div>
+          <div class="fg"><label class="fl">Contact person</label><input class="fi" name="contact" value="${esc(c.contact||'')}"></div>
+        </div>
+        <div class="fg"><label class="fl">Address</label><textarea class="fta" name="address" rows="2">${esc(c.address||'')}</textarea></div>
+      </form>
+    </div>
+    <div class="m-foot">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-p" onclick="document.getElementById('csForm').requestSubmit()">${isNew?'Add customer':'Save'}</button>
+    </div>
+  `);
+}
+function saveCustomer(isNew, id) {
+  const f = document.getElementById('csForm');
+  const data = { id };
+  for (const el of f.elements) if (el.name) data[el.name] = el.name === 'creditLimit' ? parseFloat(el.value)||0 : el.value;
+  const customers = tstore.get('customers') || [];
+  if (isNew) customers.push(data);
+  else {
+    const idx = customers.findIndex(c => c.id === id);
+    if (idx >= 0) customers[idx] = data;
+  }
+  tstore.set('customers', customers);
+  closeModal();
+  toast('Customer saved ✓');
+  view_customers();
+  renderSidebar();
+}
+function deleteCustomer(id) {
+  if (!confirm('Delete this customer?')) return;
+  tstore.set('customers', (tstore.get('customers') || []).filter(c => c.id !== id));
+  toast('Customer deleted');
+  view_customers();
+  renderSidebar();
+}
+
+/* ── VENDORS ── */
+function view_vendors() {
+  const vendors = tstore.get('vendors') || [];
+  document.getElementById('main').innerHTML = `
+    <div class="ph">
+      <div><div class="pt">🚚 Vendors / Suppliers</div><div class="ps">${vendors.length} vendor${vendors.length===1?'':'s'} configured</div></div>
+      <div class="brow"><button class="btn btn-p" onclick="editVendor()">＋ Add vendor</button></div>
+    </div>
+    ${vendors.length === 0 ? `
+      <div class="card"><div class="cb"><div class="empty">
+        <div class="empty-ic">🚚</div><div class="empty-tt">No vendors yet</div>
+        <div class="empty-sb">Add suppliers to track purchases and payables.</div>
+        <button class="btn btn-p" onclick="editVendor()">＋ Add your first vendor</button>
+      </div></div></div>
+    ` : `
+      <div class="card">
+        <div class="ch"><div class="ct">Vendors</div>
+          <input class="fi" style="width:240px" placeholder="🔍 Search…" oninput="filterVendors(this.value)" id="vdSearch"></div>
+        <div class="tw">
+          <table id="vdTable">
+            <thead><tr><th>Name</th><th>Category</th><th>Email</th><th>Phone</th><th>Currency</th><th></th></tr></thead>
+            <tbody>
+              ${vendors.map(v => `
+                <tr data-search="${esc(v.name+' '+(v.email||'')+' '+(v.phone||'')).toLowerCase()}">
+                  <td><b>${esc(v.name)}</b>${v.tin?'<div style="font-size:10px;color:var(--t3);font-family:Consolas">TIN: '+esc(v.tin)+'</div>':''}</td>
+                  <td>${esc(v.category||'—')}</td>
+                  <td>${esc(v.email||'—')}</td>
+                  <td>${esc(v.phone||'—')}</td>
+                  <td>${esc(v.currency||'MVR')}</td>
+                  <td class="row-actions">
+                    <button class="btn btn-xs" onclick='editVendor(${JSON.stringify(v)})'>Edit</button>
+                    <button class="btn btn-xs" onclick='deleteVendor("${esc(v.id)}")' style="color:var(--red)">×</button>
+                  </td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `}
+  `;
+}
+function filterVendors(q) {
+  q = q.trim().toLowerCase();
+  document.querySelectorAll('#vdTable tbody tr').forEach(tr => {
+    tr.style.display = !q || tr.dataset.search.includes(q) ? '' : 'none';
+  });
+}
+function editVendor(v) {
+  const isNew = !v;
+  v = v || { id: uid(), name:'', category:'', currency:'MVR', tin:'', phone:'', email:'', address:'' };
+  showModal(`
+    <div class="m-head">
+      <div><div class="m-tt">${isNew?'New':'Edit'} Vendor</div></div>
+      <button class="m-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="m-body">
+      <form id="vdForm" onsubmit="event.preventDefault();saveVendor(${isNew},'${esc(v.id)}')">
+        <div class="fg"><label class="fl">Vendor name <span class="req">*</span></label><input class="fi" name="name" value="${esc(v.name)}" required></div>
+        <div class="fg2">
+          <div class="fg"><label class="fl">Category</label><input class="fi" name="category" value="${esc(v.category||'')}" placeholder="e.g. Raw materials"></div>
+          <div class="fg"><label class="fl">Currency</label><select class="fs" name="currency">${['MVR','USD','EUR','INR'].map(c=>`<option ${v.currency===c?'selected':''}>${c}</option>`).join('')}</select></div>
+        </div>
+        <div class="fg2">
+          <div class="fg"><label class="fl">Email</label><input class="fi" type="email" name="email" value="${esc(v.email||'')}"></div>
+          <div class="fg"><label class="fl">Phone</label><input class="fi" name="phone" value="${esc(v.phone||'')}"></div>
+        </div>
+        <div class="fg2">
+          <div class="fg"><label class="fl">TIN</label><input class="fi" name="tin" value="${esc(v.tin||'')}"></div>
+          <div class="fg"><label class="fl">Payment terms</label><select class="fs" name="terms">${['COD','Net 7','Net 15','Net 30','Net 45','Net 60','Net 90'].map(t=>`<option ${v.terms===t?'selected':''}>${t}</option>`).join('')}</select></div>
+        </div>
+        <div class="fg"><label class="fl">Address</label><textarea class="fta" name="address" rows="2">${esc(v.address||'')}</textarea></div>
+      </form>
+    </div>
+    <div class="m-foot">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-p" onclick="document.getElementById('vdForm').requestSubmit()">${isNew?'Add vendor':'Save'}</button>
+    </div>
+  `);
+}
+function saveVendor(isNew, id) {
+  const f = document.getElementById('vdForm');
+  const data = { id };
+  for (const el of f.elements) if (el.name) data[el.name] = el.value;
+  const vendors = tstore.get('vendors') || [];
+  if (isNew) vendors.push(data);
+  else {
+    const idx = vendors.findIndex(v => v.id === id);
+    if (idx >= 0) vendors[idx] = data;
+  }
+  tstore.set('vendors', vendors);
+  closeModal();
+  toast('Vendor saved ✓');
+  view_vendors();
+  renderSidebar();
+}
+function deleteVendor(id) {
+  if (!confirm('Delete this vendor?')) return;
+  tstore.set('vendors', (tstore.get('vendors') || []).filter(v => v.id !== id));
+  toast('Vendor deleted');
+  view_vendors();
+  renderSidebar();
+}
+
+/* ── TAX SETTINGS ── */
+function view_tax() {
+  const t = tstore.get('tax') || { gstEnabled:false, gstRate:8, tgstRate:12, bptEnabled:false, bptRate:15 };
+  document.getElementById('main').innerHTML = `
+    <div class="ph">
+      <div><div class="pt">🧾 Tax Settings</div><div class="ps">Configure GST, BPT and withholding rates for your business</div></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Goods & Services Tax (GST)</div><div class="cs">For MIRA-compliant GST charging on sales</div></div>
+      <div class="cb">
+        <form id="taxForm" onsubmit="event.preventDefault();saveTax()">
+          <label style="display:flex;gap:10px;align-items:center;font-size:13px;margin-bottom:14px;cursor:pointer">
+            <input type="checkbox" name="gstEnabled" ${t.gstEnabled?'checked':''} style="width:18px;height:18px;accent-color:var(--blue)">
+            <span><b>Enable GST on sales</b> — charge GST on invoices and POS receipts</span>
+          </label>
+          <div class="fg3">
+            <div class="fg"><label class="fl">Standard GST rate (%)</label><input class="fi" type="number" step="0.01" name="gstRate" value="${t.gstRate||8}"></div>
+            <div class="fg"><label class="fl">TGST (Tourism GST) %</label><input class="fi" type="number" step="0.01" name="tgstRate" value="${t.tgstRate||12}"></div>
+            <div class="fg"><label class="fl">GST registration #</label><input class="fi" name="gstNumber" value="${esc(t.gstNumber||'')}" placeholder="optional"></div>
+          </div>
+
+          <hr style="border:none;border-top:1px solid var(--border);margin:20px 0">
+          <div style="font-size:13.5px;font-weight:800;color:var(--blue3);margin-bottom:10px">Business Profit Tax (BPT)</div>
+          <label style="display:flex;gap:10px;align-items:center;font-size:13px;margin-bottom:14px;cursor:pointer">
+            <input type="checkbox" name="bptEnabled" ${t.bptEnabled?'checked':''} style="width:18px;height:18px;accent-color:var(--blue)">
+            <span><b>Subject to BPT</b> — accrue income tax on profit</span>
+          </label>
+          <div class="fg3">
+            <div class="fg"><label class="fl">BPT rate (%)</label><input class="fi" type="number" step="0.01" name="bptRate" value="${t.bptRate||15}"></div>
+            <div class="fg"><label class="fl">Withholding rate (%)</label><input class="fi" type="number" step="0.01" name="whRate" value="${t.whRate||0}"></div>
+            <div class="fg"><label class="fl">BPT registration #</label><input class="fi" name="bptNumber" value="${esc(t.bptNumber||'')}" placeholder="optional"></div>
+          </div>
+
+          <button type="submit" class="btn btn-p">💾 Save tax settings</button>
+        </form>
+      </div>
+    </div>
+  `;
+}
+function saveTax() {
+  const f = document.getElementById('taxForm');
+  const data = {};
+  for (const el of f.elements) {
+    if (!el.name) continue;
+    if (el.type === 'checkbox') data[el.name] = el.checked;
+    else if (el.type === 'number') data[el.name] = parseFloat(el.value)||0;
+    else data[el.name] = el.value;
+  }
+  tstore.set('tax', data);
+  toast('Tax settings saved ✓');
+  renderSidebar();
+}
+
+/* ── BRANDING ── */
+function view_branding() {
+  const b = tstore.get('branding') || { primaryColor:'#1849a9', accentColor:'#6b21a8', invoiceFooter:'', logoData:null };
+  document.getElementById('main').innerHTML = `
+    <div class="ph">
+      <div><div class="pt">🎨 Branding & Logo</div><div class="ps">How your invoices and reports look</div></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Brand</div></div>
+      <div class="cb">
+        <form id="brForm" onsubmit="event.preventDefault();saveBranding()">
+          <div class="fg">
+            <label class="fl">Logo (PNG/JPG, max 500KB)</label>
+            <div style="display:flex;align-items:center;gap:14px">
+              <div id="logoPreview" style="width:90px;height:90px;border-radius:12px;background:${b.logoData?`url('${b.logoData}') center/contain no-repeat`:'var(--bg)'};border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;color:var(--t3);font-size:11px;font-weight:600">${b.logoData?'':'No logo'}</div>
+              <div>
+                <input type="file" id="logoFile" accept="image/png,image/jpeg" onchange="uploadLogo(this)" style="display:none">
+                <button class="btn" type="button" onclick="document.getElementById('logoFile').click()">📤 Upload logo</button>
+                ${b.logoData?'<button class="btn" type="button" onclick="removeLogo()" style="margin-left:6px;color:var(--red)">Remove</button>':''}
+                <div style="font-size:11px;color:var(--t3);margin-top:6px">Used on invoices, receipts, reports</div>
+              </div>
+            </div>
+          </div>
+          <div class="fg2">
+            <div class="fg"><label class="fl">Primary colour</label>
+              <div style="display:flex;gap:8px;align-items:center">
+                <input type="color" name="primaryColor" value="${b.primaryColor}" style="width:50px;height:38px;border:1px solid var(--border);border-radius:8px;cursor:pointer">
+                <input class="fi" name="primaryColorText" value="${b.primaryColor}" style="font-family:Consolas">
+              </div>
+            </div>
+            <div class="fg"><label class="fl">Accent colour</label>
+              <div style="display:flex;gap:8px;align-items:center">
+                <input type="color" name="accentColor" value="${b.accentColor}" style="width:50px;height:38px;border:1px solid var(--border);border-radius:8px;cursor:pointer">
+                <input class="fi" name="accentColorText" value="${b.accentColor}" style="font-family:Consolas">
+              </div>
+            </div>
+          </div>
+          <div class="fg"><label class="fl">Invoice footer text</label>
+            <textarea class="fta" name="invoiceFooter" rows="3" placeholder="e.g. Thank you for your business. Bank: BML 7704-...">${esc(b.invoiceFooter||'')}</textarea></div>
+          <button type="submit" class="btn btn-p">💾 Save branding</button>
+        </form>
+      </div>
+    </div>
+  `;
+}
+function uploadLogo(input) {
+  const f = input.files[0]; if (!f) return;
+  if (f.size > 500*1024) { toast('Logo too large (max 500KB)', true); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const b = tstore.get('branding') || {};
+    b.logoData = e.target.result;
+    tstore.set('branding', b);
+    toast('Logo uploaded ✓');
+    view_branding();
+    renderSidebar();
+  };
+  reader.readAsDataURL(f);
+}
+function removeLogo() {
+  const b = tstore.get('branding') || {};
+  delete b.logoData;
+  tstore.set('branding', b);
+  toast('Logo removed');
+  view_branding();
+}
+function saveBranding() {
+  const f = document.getElementById('brForm');
+  const data = tstore.get('branding') || {};
+  for (const el of f.elements) {
+    if (!el.name || el.name.endsWith('Text')) continue;
+    data[el.name] = el.value;
+  }
+  tstore.set('branding', data);
+  toast('Branding saved ✓');
+  renderSidebar();
+}
+
+/* ── USERS & ROLES ── */
+function view_users() {
+  const users = tstore.get('users') || [];
+  // Always include owner from session
+  const allUsers = [
+    { email: session.email, name: session.name, role: 'owner', label: 'Owner / Admin', isOwner: true },
+    ...users
+  ];
+  document.getElementById('main').innerHTML = `
+    <div class="ph">
+      <div><div class="pt">👤 Users & Roles</div><div class="ps">${allUsers.length} user${allUsers.length===1?'':'s'} can access this workspace</div></div>
+      <div class="brow"><button class="btn btn-p" onclick="editUser()">＋ Invite user</button></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Team members</div></div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Modules</th><th></th></tr></thead>
+          <tbody>
+            ${allUsers.map(u => `
+              <tr>
+                <td><b>${esc(u.name)}</b>${u.isOwner?' <span class="bdg b-asset" style="margin-left:5px">OWNER</span>':''}</td>
+                <td>${esc(u.email)}</td>
+                <td>${esc(u.label || u.role)}</td>
+                <td>${(u.access||['accounts','pos']).map(a=>`<span class="bdg" style="background:#e0e7ff;color:#3730a3;margin-right:3px">${a}</span>`).join('')}</td>
+                <td class="row-actions">
+                  ${u.isOwner ? '<span style="color:var(--t3);font-size:10.5px">(you)</span>' : `
+                    <button class="btn btn-xs" onclick='editUser(${JSON.stringify(u)})'>Edit</button>
+                    <button class="btn btn-xs" onclick='deleteUser("${esc(u.email)}")' style="color:var(--red)">×</button>
+                  `}
+                </td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+function editUser(u) {
+  const isNew = !u;
+  u = u || { email:'', name:'', role:'accountant', label:'', access:['accounts'] };
+  showModal(`
+    <div class="m-head">
+      <div><div class="m-tt">${isNew?'Invite':'Edit'} User</div></div>
+      <button class="m-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="m-body">
+      <form id="usForm" onsubmit="event.preventDefault();saveUser(${isNew},'${esc(u.email)}')">
+        <div class="fg"><label class="fl">Full name <span class="req">*</span></label><input class="fi" name="name" value="${esc(u.name)}" required></div>
+        <div class="fg"><label class="fl">Email <span class="req">*</span></label><input class="fi" type="email" name="email" value="${esc(u.email)}" required ${isNew?'':'readonly'}></div>
+        <div class="fg2">
+          <div class="fg"><label class="fl">Role</label>
+            <select class="fs" name="role" onchange="updateRoleLabel(this.value)">
+              ${[['accountant','Accountant'],['controller','Controller'],['cashier','Cashier'],['manager','Manager'],['auditor','Auditor (read-only)'],['custom','Custom']]
+                .map(([k,l])=>`<option value="${k}" ${u.role===k?'selected':''}>${l}</option>`).join('')}
+            </select></div>
+          <div class="fg"><label class="fl">Job title</label><input class="fi" name="label" value="${esc(u.label||'')}" placeholder="e.g. Senior Accountant"></div>
+        </div>
+        <div class="fg"><label class="fl">Module access</label>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            ${[['accounts','📒 AccountsCore'],['pos','🛒 RetailFlow POS'],['payflow','💳 PayFlow Pro'],['hr','👥 PeopleFlow HR']].map(([k,l])=>`
+              <label style="display:flex;gap:8px;align-items:center;font-size:13px;cursor:pointer">
+                <input type="checkbox" name="access" value="${k}" ${(u.access||[]).includes(k)?'checked':''} style="accent-color:var(--blue)">
+                ${l}
+              </label>`).join('')}
+          </div>
+        </div>
+        <div class="fg" style="background:var(--blue2);padding:10px 12px;border-radius:8px;font-size:11.5px;color:var(--blue3)">
+          ℹ Note: When you save, this person will be added to your team. Email them their workspace URL: <b>${location.host}</b>.
+          They'll sign in using this email — set their password by going to Sign In and using "Forgot password".
+        </div>
+      </form>
+    </div>
+    <div class="m-foot">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-p" onclick="document.getElementById('usForm').requestSubmit()">${isNew?'Send invitation':'Save'}</button>
+    </div>
+  `);
+}
+function saveUser(isNew, oldEmail) {
+  const f = document.getElementById('usForm');
+  const data = { access: [] };
+  for (const el of f.elements) {
+    if (!el.name) continue;
+    if (el.type === 'checkbox') { if (el.checked) data.access.push(el.value); }
+    else data[el.name] = el.value;
+  }
+  data.short = (data.name.split(' ')[0][0] + (data.name.split(' ')[1]?.[0] || '')).toUpperCase();
+  data.color = '#1849a9';
+  const users = tstore.get('users') || [];
+  if (isNew) {
+    if (users.find(u => u.email === data.email)) { toast('User already exists', true); return; }
+    users.push(data);
+  } else {
+    const idx = users.findIndex(u => u.email === oldEmail);
+    if (idx >= 0) users[idx] = data;
+  }
+  tstore.set('users', users);
+  closeModal();
+  toast(isNew ? 'User invited ✓' : 'User saved ✓');
+  view_users();
+  renderSidebar();
+}
+function deleteUser(email) {
+  if (!confirm('Remove this user from your team?')) return;
+  tstore.set('users', (tstore.get('users') || []).filter(u => u.email !== email));
+  toast('User removed');
+  view_users();
+  renderSidebar();
+}
+
+/* ── DATA IMPORT/EXPORT ── */
+function view_data() {
+  const summary = {
+    coa: (tstore.get('coa') || []).length,
+    items: (tstore.get('items') || []).length,
+    customers: (tstore.get('customers') || []).length,
+    vendors: (tstore.get('vendors') || []).length,
+    users: (tstore.get('users') || []).length
+  };
+  document.getElementById('main').innerHTML = `
+    <div class="ph">
+      <div><div class="pt">📥 Import / Export</div><div class="ps">Move your data in and out of YenuERP</div></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Export</div><div class="cs">Download your data as CSV or full backup</div></div>
+      <div class="cb">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">
+          ${[
+            ['coa','Chart of Accounts',summary.coa,'📒'],
+            ['items','Products',summary.items,'📦'],
+            ['customers','Customers',summary.customers,'👥'],
+            ['vendors','Vendors',summary.vendors,'🚚']
+          ].map(([k,l,n,ic]) => `
+            <button class="btn" onclick="exportCsv('${k}')" ${n===0?'disabled style="opacity:.5"':''}>
+              ${ic} ${l} (${n})
+            </button>
+          `).join('')}
+        </div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:18px 0">
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-p" onclick="exportFullBackup()">⬇ Full backup (JSON)</button>
+          <button class="btn" onclick="importBackup()">⬆ Restore from backup</button>
+          <input type="file" id="importFile" accept="application/json" style="display:none" onchange="processBackupFile(this)">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Import from CSV</div><div class="cs">Upload existing data — useful when moving from another system</div></div>
+      <div class="cb">
+        <p style="font-size:12.5px;color:var(--t2);margin-bottom:14px">Pick what to import. We'll show you the expected columns and skip duplicates.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn" onclick="showCsvImport('coa')">📒 Import Chart of Accounts</button>
+          <button class="btn" onclick="showCsvImport('items')">📦 Import Products</button>
+          <button class="btn" onclick="showCsvImport('customers')">👥 Import Customers</button>
+          <button class="btn" onclick="showCsvImport('vendors')">🚚 Import Vendors</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="border-color:#fecaca">
+      <div class="ch"><div class="ct" style="color:var(--red)">⚠ Danger zone</div></div>
+      <div class="cb" style="background:var(--red2)">
+        <p style="font-size:12px;color:var(--red);margin-bottom:12px"><b>Reset all setup data</b> — wipes your chart of accounts, products, customers, vendors, settings. Cannot be undone.</p>
+        <button class="btn btn-r" onclick="wipeAll()">🗑️ Reset workspace</button>
+      </div>
+    </div>
+  `;
+}
+function exportCsv(kind) {
+  const data = tstore.get(kind) || [];
+  if (data.length === 0) { toast('Nothing to export', true); return; }
+  const keys = Object.keys(data[0]);
+  const csv = [
+    keys.join(','),
+    ...data.map(row => keys.map(k => `"${String(row[k]||'').replace(/"/g,'""')}"`).join(','))
+  ].join('\n');
+  const blob = new Blob([csv], { type:'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${TENANT}-${kind}-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  toast(`Exported ${data.length} rows ✓`);
+}
+function exportFullBackup() {
+  const backup = {
+    tenant: TENANT,
+    exportedAt: new Date().toISOString(),
+    company: tstore.get('company'),
+    branding: tstore.get('branding'),
+    tax: tstore.get('tax'),
+    coa: tstore.get('coa'),
+    items: tstore.get('items'),
+    customers: tstore.get('customers'),
+    vendors: tstore.get('vendors'),
+    users: tstore.get('users')
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${TENANT}-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  toast('Backup downloaded ✓');
+}
+function importBackup() {
+  document.getElementById('importFile').click();
+}
+function processBackupFile(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!confirm(`Restore backup from ${data.exportedAt}? This will OVERWRITE all current data.`)) return;
+      ['company','branding','tax','coa','items','customers','vendors','users'].forEach(k => {
+        if (data[k] !== undefined) tstore.set(k, data[k]);
+      });
+      toast('Backup restored ✓');
+      goto('dashboard');
+    } catch (err) {
+      toast('Invalid backup file', true);
+    }
+  };
+  reader.readAsText(file);
+}
+function showCsvImport(kind) {
+  const samples = {
+    coa: 'code,name,type,class,normal\n1000,Cash,ast,ca,dr\n4000,Sales Revenue,rev,rev,cr',
+    items: 'sku,name,category,uom,cost,price,stock,taxRate\nSKU001,Coffee Bean 1kg,Beverages,kg,150,250,50,8',
+    customers: 'name,segment,email,phone,creditLimit,currency,tin\nABC Trading,b2b,abc@example.com,+960-1234567,50000,MVR,1234567-GST',
+    vendors: 'name,category,email,phone,currency,terms\nXYZ Supplies,Raw materials,xyz@example.com,+960-7654321,MVR,Net 30'
+  };
+  showModal(`
+    <div class="m-head">
+      <div><div class="m-tt">Import ${kind} from CSV</div></div>
+      <button class="m-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="m-body">
+      <p style="font-size:12.5px;color:var(--t2);margin-bottom:12px">CSV must have these columns (case-sensitive):</p>
+      <pre style="background:#0d1117;color:#e6edf3;padding:12px;border-radius:8px;font-size:11px;font-family:Consolas;overflow-x:auto">${samples[kind]}</pre>
+      <div class="fg" style="margin-top:14px">
+        <label class="fl">Paste CSV here or upload</label>
+        <textarea class="fta" id="csvData" rows="8" placeholder="${samples[kind].replace(/\n/g,'\\n')}"></textarea>
+      </div>
+      <input type="file" id="csvFile" accept=".csv,text/csv" onchange="loadCsvFile(this)">
+    </div>
+    <div class="m-foot">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-p" onclick="doImport('${kind}')">Import</button>
+    </div>
+  `);
+}
+function loadCsvFile(input) {
+  const f = input.files[0]; if (!f) return;
+  const reader = new FileReader();
+  reader.onload = e => { document.getElementById('csvData').value = e.target.result; };
+  reader.readAsText(f);
+}
+function doImport(kind) {
+  const csv = document.getElementById('csvData').value.trim();
+  if (!csv) { toast('No data to import', true); return; }
+  const lines = csv.split('\n').filter(l => l.trim());
+  const headers = lines.shift().split(',').map(h => h.trim());
+  const existing = tstore.get(kind) || [];
+  let added = 0;
+  for (const line of lines) {
+    const cells = parseCsvLine(line);
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = cells[i] || ''; });
+    if (kind === 'coa') {
+      if (existing.find(a => a.code === obj.code)) continue;
+      existing.push(obj);
+    } else {
+      obj.id = uid();
+      existing.push(obj);
+    }
+    added++;
+  }
+  tstore.set(kind, existing);
+  closeModal();
+  toast(`Imported ${added} rows ✓`);
+  goto(kind);
+}
+function parseCsvLine(line) {
+  const result = []; let inQuote = false; let current = '';
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"' && line[i+1] === '"') { current += '"'; i++; }
+    else if (c === '"') { inQuote = !inQuote; }
+    else if (c === ',' && !inQuote) { result.push(current); current = ''; }
+    else current += c;
+  }
+  result.push(current);
+  return result;
+}
+function wipeAll() {
+  if (!confirm('Permanently delete ALL setup data?')) return;
+  if (!confirm('Are you absolutely sure? This cannot be undone.')) return;
+  ['company','branding','tax','coa','items','customers','vendors','users'].forEach(k => {
+    localStorage.removeItem(T_PREFIX + k);
+  });
+  toast('All data wiped');
+  ensureDefaults();
+  goto('dashboard');
+}
+</script>
+</body>
+</html>

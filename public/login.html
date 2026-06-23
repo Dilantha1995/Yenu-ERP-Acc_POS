@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In · YenuERP</title>
+<script>
+// If already logged in, skip
+try {
+  const s = JSON.parse(localStorage.getItem('psms_session') || 'null');
+  if (s && s.tenant) location.replace('/app');
+} catch(e) {}
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f6f9;--surface:#fff;--border:#dde1e8;
+  --text:#1c2030;--t2:#5c6478;--t3:#9ba3b5;
+  --blue:#1849a9;--blue2:#eef2fc;--blue3:#0d2d6e;
+  --green:#166534;--red:#991b1b;--red2:#fef2f2;
+}
+html,body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.55;min-height:100vh}
+
+.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:radial-gradient(800px 500px at 0% 0%, rgba(24,73,169,.08), transparent 60%),
+             radial-gradient(700px 350px at 100% 100%, rgba(107,33,168,.06), transparent 65%),
+             linear-gradient(180deg, #fff, #f4f6f9)}
+
+.card{background:#fff;border-radius:18px;width:100%;max-width:440px;box-shadow:0 30px 80px rgba(13,45,110,.18),0 6px 24px rgba(13,45,110,.06);overflow:hidden;border:1px solid rgba(13,45,110,.06)}
+.head{padding:30px 32px 0;text-align:center}
+.logo{display:inline-flex;align-items:center;gap:10px;font-weight:800;color:var(--blue3);font-size:16px;text-decoration:none;margin-bottom:24px}
+.logo-mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#0d2d6e,#1849a9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px}
+.head h1{font-size:22px;font-weight:800;letter-spacing:-.01em;margin-bottom:6px}
+.head p{font-size:13px;color:var(--t2);margin-bottom:8px}
+.head p a{color:var(--blue);font-weight:600;text-decoration:none}
+.body{padding:24px 32px 0}
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:11px;font-weight:700;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.fi{width:100%;padding:12px 14px;font-size:14px;border:1.5px solid var(--border);border-radius:9px;outline:none;font-family:inherit;background:#fff;transition:all .15s}
+.fi:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(24,73,169,.08)}
+.fi.has-icon{padding-left:40px}
+.fi-wrap{position:relative}
+.fi-wrap .fi-ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--t3);pointer-events:none}
+.row-meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--t2);margin-bottom:14px}
+.row-meta label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.row-meta input{accent-color:var(--blue)}
+.row-meta a{color:var(--blue);font-weight:600;text-decoration:none}
+.btn{width:100%;padding:13px;font-size:14px;font-weight:700;border-radius:10px;cursor:pointer;border:none;font-family:inherit;background:linear-gradient(135deg,#1849a9,#0d2d6e);color:#fff;transition:all .15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(13,45,110,.25)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.err{display:none;background:var(--red2);color:var(--red);border:1px solid #fecaca;border-radius:8px;padding:10px 13px;font-size:12px;margin-top:10px;font-weight:600;line-height:1.45}
+.err.on{display:block}
+
+.foot{padding:18px 32px 28px;border-top:1px solid var(--border);margin-top:24px;text-align:center;font-size:12px;color:var(--t2);background:#fafbfc}
+.foot a{color:var(--blue);font-weight:600;text-decoration:none}
+
+.recent{padding:16px 32px;background:var(--blue2);border-top:1px solid var(--border)}
+.recent-label{font-size:10.5px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:9px}
+.recent-grid{display:flex;flex-direction:column;gap:6px}
+.recent-item{background:#fff;border:1px solid #c7d6f0;border-radius:8px;padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:12.5px;transition:all .12s;text-align:left;font-family:inherit;border:1px solid #c7d6f0}
+.recent-item:hover{border-color:var(--blue);background:#fafbff}
+.recent-av{width:28px;height:28px;border-radius:6px;background:var(--blue3);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex-shrink:0}
+.recent-info{flex:1;min-width:0}
+.recent-name{font-weight:700;color:var(--text);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.recent-email{font-size:11px;color:var(--t2)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="card">
+    <div class="head">
+      <a href="/" class="logo">
+        <div class="logo-mark">Y</div><span>YenuERP</span>
+      </a>
+      <h1>Welcome back</h1>
+      <p>Sign in to your company workspace</p>
+      <p style="margin-top:8px">New to YenuERP? <a href="/signup.html">Create an account</a></p>
+    </div>
+
+    <div class="body">
+      <form id="loginForm" onsubmit="event.preventDefault();doLogin()">
+        <div class="fg">
+          <label class="fl">Email</label>
+          <div class="fi-wrap">
+            <span class="fi-ic">✉</span>
+            <input class="fi has-icon" type="email" id="email" required autocomplete="username" placeholder="you@yourcompany.mv">
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl">Password</label>
+          <div class="fi-wrap">
+            <span class="fi-ic">🔒</span>
+            <input class="fi has-icon" type="password" id="pwd" required autocomplete="current-password" placeholder="Your password">
+          </div>
+        </div>
+        <div class="row-meta">
+          <label><input type="checkbox" id="remember" checked> Remember me</label>
+          <a href="#" onclick="event.preventDefault();alert('Contact support@yenuerp.mv to reset')">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn" id="signBtn">Sign In →</button>
+        <div class="err" id="loginErr"></div>
+      </form>
+    </div>
+
+    <div class="recent" id="recentSection" style="display:none">
+      <div class="recent-label">Recent workspaces on this device</div>
+      <div class="recent-grid" id="recentGrid"></div>
+    </div>
+
+    <div class="foot">
+      Don't have an account? <a href="/signup.html">Start your free trial →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const TENANTS_KEY = 'yenuerp_tenants';
+const ME_KEY = 'psms_session';
+
+function loadTenants(){
+  try { return JSON.parse(localStorage.getItem(TENANTS_KEY) || '{}'); }
+  catch(e){ return {}; }
+}
+
+// Show recent workspaces saved on this device
+function showRecent(){
+  const tenants = loadTenants();
+  const list = Object.values(tenants);
+  if (list.length === 0) return;
+  document.getElementById('recentSection').style.display = 'block';
+  document.getElementById('recentGrid').innerHTML = list.slice(0, 4).map(t => {
+    const initials = t.coName.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    return `<button type="button" class="recent-item" onclick="quickLogin('${esc(t.email)}','${esc(t.slug)}')">
+      <div class="recent-av">${initials}</div>
+      <div class="recent-info">
+        <div class="recent-name">${esc(t.coName)}</div>
+        <div class="recent-email">${esc(t.email)}</div>
+      </div>
+    </button>`;
+  }).join('');
+}
+function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+function quickLogin(email, slug){
+  document.getElementById('email').value = email;
+  document.getElementById('pwd').focus();
+}
+
+function doLogin(){
+  const email = document.getElementById('email').value.trim().toLowerCase();
+  const pwd   = document.getElementById('pwd').value;
+  const err   = document.getElementById('loginErr');
+  err.classList.remove('on');
+
+  const tenants = loadTenants();
+  // Find any tenant where this email matches the owner or any team user
+  let matchedTenant = null;
+  let matchedUser = null;
+  for (const t of Object.values(tenants)) {
+    if (t.email === email) {
+      // Owner login
+      if (t.pwd && t.pwd !== pwd) {
+        err.textContent = '⚠ Wrong password';
+        err.classList.add('on');
+        return;
+      }
+      matchedTenant = t;
+      matchedUser = t.users?.[0] || {
+        email: t.email,
+        name: (t.owner?.firstName||'') + ' ' + (t.owner?.lastName||''),
+        short: ((t.owner?.firstName||'X')[0] + (t.owner?.lastName||'X')[0]).toUpperCase(),
+        role: 'owner',
+        label: 'Owner / Admin',
+        color: '#0d2d6e',
+        access: ['accounts','pos','payflow','hr','setup']
+      };
+      break;
+    }
+    // Check team users for this tenant
+    if (t.users) {
+      const teamUser = t.users.find(u => u.email === email);
+      if (teamUser) {
+        matchedTenant = t;
+        matchedUser = teamUser;
+        break;
+      }
+    }
+  }
+
+  if (!matchedTenant) {
+    err.textContent = '⚠ No account found for ' + email + '. Did you mean to create a new account?';
+    err.classList.add('on');
+    return;
+  }
+
+  // Create session
+  const session = {
+    email: matchedUser.email,
+    name: matchedUser.name,
+    short: matchedUser.short,
+    role: matchedUser.role,
+    label: matchedUser.label,
+    color: matchedUser.color || '#1849a9',
+    access: matchedUser.access || ['accounts','pos'],
+    tenant: matchedTenant.slug,
+    coName: matchedTenant.coName,
+    plan: matchedTenant.plan,
+    trialEnd: matchedTenant.trialEnd,
+    demo: true
+  };
+  localStorage.setItem(ME_KEY, JSON.stringify(session));
+  localStorage.setItem('yenuerp_active', matchedTenant.slug);
+  location.href = '/app';
+}
+
+// Initial render
+showRecent();
+</script>
+
+</body>
+</html>

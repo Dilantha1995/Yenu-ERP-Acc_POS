@@ -1,228 +1,241 @@
-# PSMS Group ERP
+# YenuERP — Complete Fresh Package
 
-Integrated **AccountsCore** + **RetailFlow POS** on Vercel + Neon PostgreSQL.
-
-This repo contains the production wrapper around your two prototype HTML modules.
-It adds:
-- A **launcher** (`/`) — beautiful sign-in + module picker
-- A **bridge** (`/erp-bridge.js`) — session check, state sync, cross-module event bus
-- A **PostgreSQL schema** (`db/schema.sql`) — Neon-ready, 12 tables
-- **Vercel serverless API** (`api/*.js`) — auth, journals, POS sales, shared data, event bus
-- **Auto-integration** — when POS records a sale, a balanced journal entry is auto-posted into AccountsCore
-
-The two prototype HTML files are kept **as-is** (no behaviour changed).
+Everything you need to run YenuERP as a live multi-tenant SaaS on Vercel.
 
 ---
 
-## 📂 What's inside
+## 📦 What's in this package
 
 ```
-.
-├── public/
-│   ├── index.html         ← LAUNCHER (sign in + module picker)
-│   ├── accounts.html      ← AccountsCore (your file, unchanged)
-│   ├── pos.html           ← RetailFlow POS (your file, unchanged)
-│   └── erp-bridge.js      ← Shared client: auth guard, state sync, bus
-├── api/
-│   ├── _lib/db.js         ← Neon serverless client
-│   ├── _lib/auth.js       ← JWT sessions (HttpOnly cookie)
-│   ├── auth/login.js
-│   ├── auth/logout.js
-│   ├── auth/me.js
-│   ├── state/[module].js  ← Per-user module state snapshots
-│   ├── journals.js        ← Post / list journal entries
-│   ├── pos-sales.js       ← POS sales + atomic journal posting
-│   ├── shared.js          ← COA, customers, vendors, items
-│   ├── bus.js             ← Cross-module event bus
-│   └── health.js
+yenuerp/
+├── README.md             ← This file
+├── vercel.json           ← Vercel routing config
+├── package.json          ← Dependencies (for optional backend)
+├── .env.example          ← Environment variable template
+├── .gitignore
+│
+├── public/               ← Everything users see (frontend)
+│   ├── index.html        ← YenuERP landing page
+│   ├── signup.html       ← Trial signup wizard
+│   ├── login.html        ← Sign in for returning customers
+│   ├── app.html          ← Customer workspace / module picker
+│   ├── setup.html        ← Company setup module
+│   ├── admin.html        ← YOUR admin dashboard
+│   ├── accounts.html     ← AccountsCore module
+│   ├── pos.html          ← RetailFlow POS module
+│   ├── erp-bridge.js     ← Tenant-aware integration bridge
+│   └── diag.html         ← Diagnostics page
+│
+├── api/                  ← Optional backend (Vercel serverless functions)
+│   ├── _lib/
+│   │   ├── db.js         ← Neon database client
+│   │   └── auth.js       ← JWT session helper
+│   ├── auth/
+│   │   ├── login.js
+│   │   ├── logout.js
+│   │   └── me.js
+│   ├── state/[module].js ← Per-user state snapshot
+│   ├── journals.js       ← Post/list journal entries
+│   ├── pos-sales.js      ← POS sale + auto-journal
+│   ├── shared.js         ← COA, customers, vendors, items
+│   ├── bus.js            ← Cross-module event bus
+│   └── health.js         ← Health check endpoint
+│
 ├── db/
-│   └── schema.sql         ← Run this in Neon once
-├── scripts/
-│   └── seed.mjs           ← Run schema + create demo users
-├── vercel.json
-├── package.json
-└── .env.example
+│   └── schema.sql        ← Run in Neon SQL Editor (only if using backend)
+│
+└── scripts/
+    └── seed.mjs          ← One-shot DB seed (only if using backend)
 ```
 
 ---
 
-## 🚀 Deploy in 5 steps
+## 🚀 How to deploy (choose your path)
 
-### 1. Create the Neon database
+### PATH A — Quick demo (works right now, no database needed)
 
-1. Sign up at **https://neon.tech** (free tier is fine for testing).
-2. Create a new project named `psms-erp`.
-3. From the dashboard, copy the **Pooled connection string** — it looks like:
-   ```
-   postgresql://USER:PASSWORD@ep-xxx-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require
-   ```
+This works **today** without any backend. Data saves in each browser's localStorage.
 
-### 2. Push this repo to GitHub
+#### 1. Create a fresh GitHub repo
+- Go to https://github.com/new
+- Name: `yenuerp` (or anything)
+- Set to **Private**
+- Don't add README, .gitignore, or license (we have them)
+- Click **Create repository**
 
-```bash
-cd erp-app
-git init
-git add .
-git commit -m "Initial PSMS ERP"
-gh repo create psms-erp --private --source=. --push
-# (or push manually to a repo you create on github.com)
-```
+#### 2. Upload these files to GitHub
+- On the new empty repo page, click **"uploading an existing file"**
+- Drag ALL the files and folders from this zip
+- Wait for upload to finish (1-2 minutes)
+- Scroll down → **"Commit changes"**
 
-### 3. Deploy to Vercel
+#### 3. Deploy to Vercel
+- Go to https://vercel.com/new
+- Import your `yenuerp` GitHub repo
+- **Framework Preset:** Other
+- **Build Command:** leave EMPTY
+- **Output Directory:** `public`
+- **Skip the Environment Variables step** (not needed for Path A)
+- Click **Deploy**
 
-1. Go to **https://vercel.com/new**
-2. Import your `psms-erp` GitHub repo
-3. **Framework Preset:** Other
-4. **Build Command:** leave empty
-5. **Output Directory:** `public`
-6. Under **Environment Variables**, add:
+#### 4. Done — you're live!
+- Visit your `https://[project-name].vercel.app`
+- See the YenuERP landing page
+- Click "Start free trial" → sign up as a company → start using it
 
-   | Name           | Value                                                       |
-   |----------------|-------------------------------------------------------------|
-   | `DATABASE_URL` | (your Neon pooled connection string from step 1)            |
-   | `JWT_SECRET`   | (run `openssl rand -base64 48` and paste the output)        |
+### PATH B — Full SaaS with persistent database (Neon)
 
-7. Click **Deploy**
+Same as Path A, plus connect Neon for persistent cross-device data.
 
-### 4. Seed the database
+#### 1-3. Same as Path A above
 
-After the first deploy succeeds, run the seed script **once** to create tables
-and demo users. You can do this two ways:
+#### 4. Add Neon database via Vercel Storage
+- In Vercel: open your project → **Storage** tab
+- Click **Create Database** → **Neon (Free)**
+- Vercel creates the database and auto-links it (env vars added automatically)
 
-**Option A — locally** (recommended):
-```bash
-npm install
-export DATABASE_URL="postgresql://...your Neon URL..."
-node scripts/seed.mjs
-```
+#### 5. Run the schema in Neon
+- In Vercel Storage → click on your `neon-xxx-xxx` database
+- Click **"Open in Neon"**
+- In Neon: **SQL Editor**
+- Copy the contents of `db/schema.sql` (open in GitHub → click "Raw" → Ctrl+A → Ctrl+C)
+- Paste into Neon SQL Editor → click **Run**
+- You should see "Successful" with mostly green checkmarks
 
-**Option B — via Neon SQL Editor:** open `db/schema.sql`, paste it into the
-Neon SQL editor, run it. (Note: the hardcoded password hashes in the SQL file
-are placeholders — you must run the seed script to set real hashes, or
-manually replace them.)
+#### 6. Add JWT_SECRET in Vercel
+- Vercel project → **Settings** → **Environment Variables**
+- Click **Add another**
+- Name: `JWT_SECRET`
+- Value: Use any random 40+ character string (or run `openssl rand -base64 48` if you have a terminal)
+  - Example value: `K7mN2pQ9rT5vX8aB3cE6fH1jL4nP7sU0wY9zD2gJ5kM8`
+- Click **Save**
 
-### 5. Open your app
+#### 7. Redeploy
+- Vercel → **Deployments** tab → click "..." on latest → **Redeploy**
 
-Visit `https://your-project.vercel.app` and sign in.
-
-| Email              | Password    | Role                       |
-|--------------------|-------------|----------------------------|
-| cfo@psms.mv        | CFO@2026    | CFO · all modules          |
-| ctlr@psms.mv       | Ctlr@2026   | Financial Controller       |
-| acct@psms.mv       | Acct@2026   | Senior Accountant          |
-| cashier@psms.mv    | Cash@2026   | Cashier · POS only         |
-| mgr@psms.mv        | Mgr@2026    | Store Manager              |
-| audit@psms.mv      | Audit@2026  | Auditor · read-only        |
+#### 8. Verify
+- Visit `https://[your-project].vercel.app/diag` to run automatic diagnostics
+- All checks should pass ✓
 
 ---
 
-## 🔌 How integration works
+## 🗺️ The customer journey (what people will do)
 
-The **integration bridge** (`public/erp-bridge.js`) is loaded by both modules.
-It provides `window.ERP` to module code:
+```
+1. Visit your site:        →  YenuERP landing page (homepage)
+2. Click "Start free trial" →  3-step signup wizard
+   ├─ Step 1: Name, email, password
+   ├─ Step 2: Company name, industry, workspace URL
+   └─ Step 3: Pick plan (Starter/Business/Enterprise)
+3. Land in /app             →  Workspace with "Welcome! Set up your company"
+4. Click "Start setup →"    →  Company Setup module
+   ├─ Company Info tab
+   ├─ Chart of Accounts (with 7 industry templates)
+   ├─ Products / Items
+   ├─ Customers
+   ├─ Vendors
+   ├─ Tax Settings (GST, BPT)
+   ├─ Branding (logo, colors)
+   └─ Users & Roles
+5. Setup complete           →  AccountsCore / RetailFlow POS ready to use
+6. 14-day trial countdown   →  Banner shows days remaining
+7. Trial ends               →  Modules become read-only, upgrade prompt
+```
 
+---
+
+## 🗺️ URLs you'll have
+
+| URL | What it is | Who uses it |
+|---|---|---|
+| `/` | YenuERP landing page | Visitors / prospects |
+| `/signup` | Trial signup wizard | New customers |
+| `/login` | Sign in | Returning customers |
+| `/app` | Workspace / module picker | Logged-in customers |
+| `/setup` | Company setup | Customer admins |
+| `/accounts` | AccountsCore | Customers |
+| `/pos` | RetailFlow POS | Customers |
+| `/admin` | YOUR admin dashboard | **You only** |
+| `/diag` | Diagnostics (backend health) | You for testing |
+
+---
+
+## 🔑 Demo accounts
+
+If you ever need to test the old PSMS demo (still works as an option), these login codes work in `accounts.html` and `pos.html`:
+
+| Email | Password | Role |
+|---|---|---|
+| cfo@psms.mv | CFO@2026 | CFO (full access) |
+| ctlr@psms.mv | Ctlr@2026 | Controller |
+| cashier@psms.mv | Cash@2026 | Cashier (POS only) |
+
+But for the new YenuERP SaaS flow, customers create their own accounts through `/signup`.
+
+---
+
+## 🆘 Common issues & fixes
+
+### "I see 'PSMS Group ERP' instead of YenuERP"
+You haven't uploaded the new `public/index.html` yet (or browser is cached). Force-refresh with **Ctrl+F5**.
+
+### "Sign in doesn't work / nothing happens"
+You're in demo mode (no backend) → use `/signup` to create an account first. Or visit `/diag` to see what's wrong.
+
+### "I want to start fresh / clear all test data"
+In your browser's DevTools (F12) → Console → run:
 ```js
-window.ERP = {
-  session,                // { email, name, role, access, ... }
-  api: { call },          // fetch wrapper that adds auth
-  state: { load, save },  // per-user, per-module persistence
-  bus:   { emit, on },    // cross-module events
-  postSale,               // (POS only) — emits pos.sale.completed
-};
+localStorage.clear(); location.reload();
 ```
+This clears all tenants and sessions on this browser.
 
-### The POS → AccountsCore flow
+### "I want to add the Neon database later"
+Follow Path B steps 4-7 above whenever you're ready. The frontend doesn't change — only the backend wakes up.
 
-1. **Cashier completes a sale** in `pos.html`
-2. POS code calls `ERP.postSale(sale)` (or emits `pos.sale.completed`)
-3. The bridge POSTs the sale to `/api/pos-sales`
-4. The API endpoint **atomically**:
-   - Inserts the sale + lines + payments
-   - Creates a balanced journal entry (Dr Cash / Cr Sales / Cr GST / Dr COGS / Cr Inventory)
-   - Decrements stock
-5. The Accounts module (if open in another tab) picks up the event via
-   `bus.poll()` every 8 s and refreshes its journal list
-
-To hook this into the POS module, add **one line** to your existing checkout
-function in `pos.html`. Look for where `SALES.push(sale)` happens, and add
-right after it:
-```js
-if (window.ERP?.postSale) ERP.postSale(sale);
-```
-
-The bridge handles everything else.
-
-### Adding a hook in the Accounts module
-
-If you want the in-memory journal list in `accounts.html` to refresh when a
-POS sale arrives in another tab, expose a hook from the React app:
-
-```js
-// near the top of accounts.html's App component:
-useEffect(() => {
-  window.AccountsHooks = { addJournal: (je) => setJournals(j => [...j, je]) };
-}, []);
-```
-
-The bridge already calls `window.AccountsHooks.addJournal(je)` if it exists.
+### "/admin shows nothing"
+The admin dashboard reads tenants from localStorage on your current browser. To see customers from across devices, you need Path B (Neon backend) where the data lives server-side.
 
 ---
 
-## 🧪 Local development
+## 📋 What works right now (Path A, no backend)
 
-```bash
-npm install
-cp .env.example .env.local
-# edit .env.local with your DATABASE_URL and JWT_SECRET
-npx vercel dev
-```
+- ✅ Beautiful YenuERP landing page
+- ✅ 3-step signup wizard with 3 plans
+- ✅ Login for returning customers
+- ✅ Per-tenant isolated data (each company's data is separate)
+- ✅ Full Company Setup module:
+  - 7 industry COA templates
+  - Add/edit products, customers, vendors
+  - Tax settings (GST, BPT, TGST)
+  - Branding with logo upload
+  - Users & roles
+  - CSV import/export
+- ✅ 14-day trial countdown
+- ✅ Trial expiry → modules become read-only
+- ✅ AccountsCore + RetailFlow POS work fully
+- ✅ Cross-tab POS → Accounts sync
+- ✅ Your admin dashboard at /admin
 
-Open `http://localhost:3000`.
+**Limitation:** Data is per-browser. A customer signing in on their phone won't see the data they entered on their laptop. That's what Path B (Neon) solves.
 
----
+## 📋 What Path B adds (Neon database)
 
-## 🔒 Security notes
-
-- Passwords are bcrypt-hashed (`rounds=10`)
-- Sessions use **HttpOnly** JWT cookies (not localStorage) — XSS-safe
-- `Secure` flag is set in production
-- `SameSite=Lax` prevents CSRF on cross-site POSTs
-- Every API mutation is recorded in `audit_log`
-- The bridge **bounces unauthenticated users to `/`** before any module HTML renders
-
-For real production use you should also:
-- Rotate `JWT_SECRET` periodically
-- Add rate limiting on `/api/auth/login` (Vercel Edge Config or Upstash)
-- Enable Neon's IP allow list
-- Run regular database backups (Neon does this automatically on paid plans)
-
----
-
-## 📋 What's preserved from the prototypes
-
-**Both HTML files are byte-identical to your originals** except for a single
-`<script src="/erp-bridge.js"></script>` tag injected at the top of `<head>`.
-Every feature, every page, every seed data point is intact. The modules will
-continue to work in demo mode (localStorage only) if the backend is down — the
-bridge auto-detects and falls back gracefully.
+- ✅ Real cross-device data — customer's phone sees what they did on laptop
+- ✅ Multiple users per tenant — accountant and cashier both work on the same data
+- ✅ Real authentication with bcrypt password hashing
+- ✅ Audit log of every action
+- ✅ Server-side journal posting (POS sales auto-create real GL entries)
+- ✅ Backups via Neon's 7-day point-in-time recovery
 
 ---
 
-## 🆘 Troubleshooting
+## 🎯 Recommended next steps
 
-**"Backend not configured" on login**
-→ `DATABASE_URL` not set in Vercel. Add it in Project Settings → Environment Variables and redeploy.
-
-**"Invalid email or password" but credentials are correct**
-→ The bcrypt hashes in `db/schema.sql` are placeholders. Run `node scripts/seed.mjs` to set fresh ones.
-
-**Modules show but sign-in loops back to /**
-→ Cookie domain mismatch. Make sure you're hitting the same hostname for both `/` and `/api/*`.
-
-**POS sale doesn't show up in Accounts journal**
-→ Check the browser Network tab on POS — is `POST /api/pos-sales` returning 200?
-→ Check the bridge is loaded: `console.log(window.ERP)` in DevTools.
+1. **Today**: Deploy Path A. Sign up as your own company. Verify everything works.
+2. **This week**: Show 2-3 prospects. Have them sign up themselves. See if anyone has issues.
+3. **Next week**: Move to Path B (Neon backend). Now data persists across devices.
+4. **Later**: Wire AccountsCore and POS to read each tenant's own COA/products from Setup. This is the final piece to remove all PSMS sample data.
 
 ---
 
-© 2026 PSMS Group · Male', Maldives
+© 2026 YenuERP · Built in the Maldives
